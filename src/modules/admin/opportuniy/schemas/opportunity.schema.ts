@@ -9,6 +9,9 @@ export class Opportunity {
 
   @Prop({ required: true })
   opportunity: string;
+  
+  @Prop({ required: true })
+  status: number;
 
 }
 

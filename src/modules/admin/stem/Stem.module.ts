@@ -21,6 +21,7 @@ import { StemService } from './services/stem.service';
 import { ProgramSchoolOrg, ProgramSchoolOrgSchema } from 'src/modules/admin/program-school-org/schemas/program-school-org.schema';
 import { ProgramSchoolType, ProgramSchoolTypeSchema } from 'src/modules/admin/program-school-type/schemas/program.school.type.schema';
 import { School, SchoolSchema } from 'src/modules/admin/shool/schemas/school.schema';
+import { SpecificFieldStudy, SpecificFieldStudySchema } from 'src/modules/admin/general-field-study/schemas/specific.field.study.service.schema';
 import { Opportunity, OpportunitySchema } from 'src/modules/admin/opportuniy/schemas/opportunity.schema';
 import { GeneralFieldStudy, GeneralFieldStudySchema } from 'src/modules/admin/general-field-study/schemas/general.field.study.service.schema';
 import { Credential, CredentialSchema } from 'src/modules/admin/credential/schemas/credential.schema';
@@ -30,6 +31,7 @@ import { Stem, StemSchema } from 'src/modules/admin/stem/schemas/stem.schema';
   imports: [MongooseModule.forFeature([
     { name: ProgramSchoolType.name, schema: ProgramSchoolTypeSchema },
     { name: GeneralFieldStudy.name, schema: GeneralFieldStudySchema },
+    { name: SpecificFieldStudy.name, schema: SpecificFieldStudySchema },
     { name: ProgramSchoolOrg.name, schema: ProgramSchoolOrgSchema },
     { name: Opportunity.name, schema: OpportunitySchema },
     { name: School.name, schema: SchoolSchema },

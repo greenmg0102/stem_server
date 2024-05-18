@@ -8,6 +8,7 @@ import { ProgramSchoolType } from 'src/modules/admin/program-school-type/schemas
 import { School } from 'src/modules/admin/shool/schemas/school.schema';
 import { Opportunity } from 'src/modules/admin/opportuniy/schemas/opportunity.schema';
 import { GeneralFieldStudy } from 'src/modules/admin/general-field-study/schemas/general.field.study.service.schema';
+import { SpecificFieldStudy } from 'src/modules/admin/general-field-study/schemas/specific.field.study.service.schema';
 import { Credential } from 'src/modules/admin/credential/schemas/credential.schema';
 
 @Injectable()
@@ -18,26 +19,27 @@ export class StemService {
     @InjectModel(ProgramSchoolOrg.name) private readonly programSchoolOrgModal: Model<ProgramSchoolOrg>,
     @InjectModel(ProgramSchoolType.name) private readonly programSchoolTypeModal: Model<ProgramSchoolType>,
     @InjectModel(School.name) private readonly schoolModal: Model<School>,
-    @InjectModel(Opportunity.name) private readonly opportunityModal: Model<Opportunity>,
+    @InjectModel(SpecificFieldStudy.name) private readonly specificFieldStudyModal: Model<SpecificFieldStudy>,
     @InjectModel(GeneralFieldStudy.name) private readonly generalFieldStudyModal: Model<GeneralFieldStudy>,
     @InjectModel(Credential.name) private readonly credentialModal: Model<Credential>,
+    @InjectModel(Opportunity.name) private readonly opportunityModal: Model<Opportunity>,
     @InjectModel(Stem.name) private readonly stemModal: Model<Stem>,
 
   ) { }
 
   async read(body: any): Promise<any> {
 
-    // programSchoolOrg: [],
-    // programSchoolOrgType: [],
-    // credentialSchool: [],
-    // Opportunity: [],
-    // field: [],
-    // credential: [],
-    // areaStudy: [],
-    // educationLieve: [],
-    // applicantRequirementCredential: [],
-    // courseLink: "",
-    // opportunityLink: "",
+    // import ProgramSchoolOrg from './tempData1.txt'
+    // import ProgramSchoolOrgType from './tempData2.txt'
+    // import CredentialsSchool from './tempData3.txt'
+    // import SpecificAreaofStudy from './tempData4.txt'
+    // import GeneralFieldofStudy from './tempData5.txt'
+    // import CourseList from './tempData6.txt'
+    // import Credential from './tempData7.txt'
+    // import EducationLevel from './tempData8.txt'
+    // import ApplicantRequirementCredential from './tempData9.txt'
+    // import Age from './tempData10.txt'
+    // import OpportunityLink from './tempData11.txt'
 
 
     // for (let i = 0; i < body.list.length; i++) {
@@ -45,36 +47,59 @@ export class StemService {
     //   let programSchoolOrgId = await this.programSchoolOrgModal.findOne({ name: body.list[i][0] }).then((res: any) => { return res._id })
     //   let programSchoolOrgTypeId = await this.programSchoolTypeModal.findOne({ type: body.list[i][1] }).then((res: any) => { return res._id })
     //   let credentialSchoolId = await this.schoolModal.findOne({ school: body.list[i][2] }).then((res: any) => { return res._id })
-    //   let OpportunityId = await this.opportunityModal.findOne({ opportunity: body.list[i][3] }).then((res: any) => { return res._id })
-    //   let fieldId = await this.generalFieldStudyModal.findOne({ field: body.list[i][5] }).then((res: any) => { return res._id })
-    //   let credentialId = await this.credentialModal.findOne({ credential: body.list[i][7] }).then((res: any) => { return res._id })
+    //   let SpecificAreaofStudyId = await this.specificFieldStudyModal.findOne({ specificField: body.list[i][3] }).then((res: any) => { return res._id })
+    //   let fieldId = await this.generalFieldStudyModal.findOne({ field: body.list[i][4] }).then((res: any) => { return res._id })
+    //   let CourseListString = body.list[i][5]
+    //   let credentialId = await this.credentialModal.findOne({ credential: body.list[i][6] }).then((res: any) => { return res._id })
+    //   let EducationLevel = body.list[i][7]
+    //   let ApplicantRequirementCredential = body.list[i][8]
+    //   let Age = body.list[i][9]
+    //   let OpportunityLink = body.list[i][10]
+    //   let OpportunityId = await this.opportunityModal.findOne({ opportunity: body.list[i][11] }).then((res: any) => { return res._id })
 
     //   let data = {
     //     programSchoolOrg: programSchoolOrgId,
     //     programSchoolOrgType: programSchoolOrgTypeId,
     //     credentialSchool: credentialSchoolId,
-    //     Opportunity: OpportunityId,
+    //     SpecificAreaofStudy: SpecificAreaofStudyId,
     //     field: fieldId,
-    //     credential: credentialId
+    //     CourseList: CourseListString,
+    //     credential: credentialId,
+    //     EducationLevel: EducationLevel,
+    //     ApplicantRequirementCredential: ApplicantRequirementCredential,
+    //     Age: Age,
+    //     OpportunityLink: OpportunityLink,
+    //     Opportunity: OpportunityId,
     //   }
 
     //   let newStem = new this.stemModal(data);
-    //   let result = await newStem.save()
+    //   await newStem.save()
 
     // }
 
+    // console.log("body.list", body.list);
 
-    // console.log("body", body.list);
+    // for (let i = 0; i < body.list.length; i++) {
+    //   let data = {
+    //     name: body.list[i][0],
+    //     address: body.list[i][1],
+    //     city: body.list[i][2],
+    //     zip: body.list[i][3],
+    //     neighborhood: body.list[i][4],
+    //     status: 1
+    //   }
 
-    // const wwwGen = this.programSchoolOrgModal;
+    //   let newStem = new this.stemModal(data);
+    //   await newStem.save()
+    // }
+
+    // console.log("wwwGen", body.list);
+
+    // const wwwGen = this.opportunityModal;
 
     // const data = body.list.map((item: any) => ({
-    //   name: item[0],
-    //   address: item[1],
-    //   city: item[2],
-    //   zip: item[3],
-    //   neighborhood: item[4],
-    //   status: 1,
+    //   opportunity: item,
+    //   status: 1
     // }));
 
     // wwwGen.insertMany(data)
@@ -162,7 +187,9 @@ export class StemService {
           field: 1,
           credential: 1
         }
-      }
+      },
+      { $skip: 0 },
+      { $limit: 20 }
     ]).exec();
 
     return {
@@ -263,7 +290,9 @@ export class StemService {
               field: 1,
               credential: 1
             }
-          }
+          },
+          { $skip: 0 },
+          { $limit: 20 }
         ]).exec();
 
         return {
