@@ -26,7 +26,13 @@ export class IntegrationSearchService {
 
     async read(body: any): Promise<any> {
 
+        let page = body.page
+        let pageSize = body.pageSize
+        let searchParameter = body.searchParameter
+
         console.log("programSchoolOrg", body.programSchoolOrg);
+        console.log("searchParameter", searchParameter);
+
 
         let programSchoolOrgIdList = body.programSchoolOrg.length === 0 ? [] : body.programSchoolOrg.map((item: any) => new ObjectId(item.value))
         let programSchoolOrgTypeList = body.programSchoolOrgType.length === 0 ? [] : body.programSchoolOrgType.map((item: any) => new ObjectId(item.value))
@@ -35,14 +41,19 @@ export class IntegrationSearchService {
         let fieldList = body.field.length === 0 ? [] : body.field.map((item: any) => new ObjectId(item.value))
         let credentialList = body.credential.length === 0 ? [] : body.credential.map((item: any) => new ObjectId(item.value))
 
-        let pageNumber = body.pageNumber
-        let pageLimit = body.pageLimit
-        let searchParameter = body.searchParameter
+        let bufferMatching: any = {
+            $or: [
+                { CourseList: { $regex: searchParameter } },
+                { EducationLevel: { $regex: searchParameter } },
+                { ApplicantRequirementCredential: { $regex: searchParameter } },
+                { Age: { $regex: searchParameter } },
+                { OpportunityLink: { $regex: searchParameter } },
+            ]
+        };
 
-        console.log("programSchoolOrgIdList", programSchoolOrgIdList);
-
-
-        let conditionPairPipeline: any = {};
+        let conditionPairPipeline: any = {
+            ...bufferMatching
+        };
 
         if (body.Opportunity.length > 0) conditionPairPipeline.Opportunity = { $in: OpportunityList }
         if (body.programSchoolOrg.length > 0) conditionPairPipeline.programSchoolOrg = { $in: programSchoolOrgIdList }
@@ -51,8 +62,10 @@ export class IntegrationSearchService {
         if (body.field.length > 0) conditionPairPipeline.field = { $in: fieldList }
         if (body.credential.length > 0) conditionPairPipeline.credential = { $in: credentialList }
 
-        console.log("conditionPairPipeline", conditionPairPipeline);
-        
+        let total: any = await this.stemModal.aggregate([
+            { $match: conditionPairPipeline },
+            { $count: "totalCount" }
+        ]).exec();
 
 
         const handsPipeline = [
@@ -130,18 +143,123 @@ export class IntegrationSearchService {
                     credentialSchool: 1,
                     opportunity: 1,
                     field: 1,
-                    credential: 1
+                    credential: 1,
+                    CourseList: 1,
+                    EducationLevel: 1,
+                    ApplicantRequirementCredential: 1,
+                    Age: 1,
+                    OpportunityLink: 1
                 }
             },
-            { $skip: pageNumber },
-            { $limit: (pageNumber + 1) * pageLimit }
+            { $skip: page - 1 },
+            { $limit: pageSize },
         ];
 
         const result = await this.stemModal.aggregate(handsPipeline).exec()
 
         return {
             isOkay: true,
-            result: result
+            result: result,
+            totalCount: total[0] === undefined ? 0 : total[0].totalCount
+        }
+    }
+
+    async readId(id: any): Promise<any> {
+
+        const handsPipeline = [
+            {
+                $match: {
+                    _id: new ObjectId(id)
+                }
+            },
+            {
+                $lookup: {
+                    from: 'programschoolorgs',
+                    localField: 'programSchoolOrg',
+                    foreignField: '_id',
+                    as: 'schoolOrg',
+                },
+            },
+            {
+                $unwind: '$schoolOrg',
+            },
+            {
+                $lookup: {
+                    from: 'programschooltypes',
+                    localField: 'programSchoolOrgType',
+                    foreignField: '_id',
+                    as: 'schoolOrgType',
+                },
+            },
+            {
+                $unwind: '$schoolOrgType',
+            },
+            {
+                $lookup: {
+                    from: 'schools',
+                    localField: 'credentialSchool',
+                    foreignField: '_id',
+                    as: 'credentialSchool',
+                },
+            },
+            {
+                $unwind: '$credentialSchool',
+            },
+            {
+                $lookup: {
+                    from: 'opportunitys',
+                    localField: 'Opportunity',
+                    foreignField: '_id',
+                    as: 'opportunity',
+                },
+            },
+            {
+                $unwind: '$opportunity',
+            },
+            {
+                $lookup: {
+                    from: 'generalfieldstudys',
+                    localField: 'field',
+                    foreignField: '_id',
+                    as: 'field',
+                },
+            },
+            {
+                $unwind: '$field',
+            },
+            {
+                $lookup: {
+                    from: 'credentials',
+                    localField: 'credential',
+                    foreignField: '_id',
+                    as: 'credential',
+                },
+            },
+            {
+                $unwind: '$credential',
+            },
+            {
+                $project: {
+                    schoolOrg: 1,
+                    schoolOrgType: 1,
+                    credentialSchool: 1,
+                    opportunity: 1,
+                    field: 1,
+                    credential: 1,
+                    CourseList: 1,
+                    EducationLevel: 1,
+                    ApplicantRequirementCredential: 1,
+                    Age: 1,
+                    OpportunityLink: 1
+                }
+            },
+        ];
+
+        const result = await this.stemModal.aggregate(handsPipeline).exec()
+
+        return {
+            isOkay: true,
+            result: result,
         }
     }
 
