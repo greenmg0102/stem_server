@@ -71,7 +71,7 @@ export class StemService {
     //     OpportunityLink: OpportunityLink,
     //     Opportunity: OpportunityId,
     //   }
-
+    //   console.log(i, data);
     //   let newStem = new this.stemModal(data);
     //   await newStem.save()
 
@@ -79,18 +79,22 @@ export class StemService {
 
     // console.log("body.list", body.list);
 
-    for (let i = 0; i < body.list.length; i++) {
-      let data = {
-        school: body.list[i],
-        status: 1
-      }
+    // for (let i = 0; i < body.list.length; i++) {
+    //   let data = {
+    //     name: body.list[i][0],
+    //     address: body.list[i][1],
+    //     city: body.list[i][2],
+    //     zip: body.list[i][3],
+    //     neighborhood: body.list[i][4] === null || body.list[i][4] === undefined ? "N/A" : body.list[i][4],
+    //     status: 1
+    //   }
 
-      console.log(i);
-      
+    //   console.log(i, data);
 
-      let newStem = new this.schoolModal(data);
-      await newStem.save()
-    }
+
+    //   let newStem = new this.programSchoolOrgModal(data);
+    //   await newStem.save()
+    // }
 
 
     // console.log("wwwGen", body.list);
