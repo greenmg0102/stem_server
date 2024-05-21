@@ -79,19 +79,19 @@ export class StemService {
 
     // console.log("body.list", body.list);
 
-    // for (let i = 0; i < body.list.length; i++) {
-    //   let data = {
-    //     name: body.list[i][0],
-    //     address: body.list[i][1],
-    //     city: body.list[i][2],
-    //     zip: body.list[i][3],
-    //     neighborhood: body.list[i][4],
-    //     status: 1
-    //   }
+    for (let i = 0; i < body.list.length; i++) {
+      let data = {
+        school: body.list[i],
+        status: 1
+      }
 
-    //   let newStem = new this.stemModal(data);
-    //   await newStem.save()
-    // }
+      console.log(i);
+      
+
+      let newStem = new this.schoolModal(data);
+      await newStem.save()
+    }
+
 
     // console.log("wwwGen", body.list);
 
