@@ -14,7 +14,7 @@ export class OpportunityService {
 
         let result = await this.opportunityModal
             .find({
-                opportunity: { $regex: opportunity },
+                opportunity: { $regex: opportunity, $options: 'i'  },
             })
             .then((res: any) => {
                 return res

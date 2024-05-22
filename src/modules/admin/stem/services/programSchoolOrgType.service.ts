@@ -14,7 +14,7 @@ export class ProgramSchoolOrgTypeService {
 
         let result = await this.programSchoolTypeModal
             .find({
-                type: { $regex: type },
+                type: { $regex: type, $options: 'i' },
                 status: 1
             })
             .then((res: any) => {

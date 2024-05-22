@@ -17,7 +17,7 @@ export class CredentialService {
 
         let result = await this.credentialModal
             .find({
-                credential: { $regex: credential },
+                credential: { $regex: credential, $options: 'i' },
                 status: 1
             })
             .then((res: any) => {

@@ -19,6 +19,12 @@ export class IntegrationSearchController {
         return hands;
     }
 
+    @Post('/real-time-read')
+    async realTimeRead(@Body() body: any) {
+        const hands = await this.integrationSearchService.realTimeRead(body);
+        return hands;
+    }
+    
     
     @Get('/readId/:id')
     async readId(@Param('id') id: string) {

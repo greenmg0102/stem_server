@@ -14,7 +14,7 @@ export class GeneralFieldStudyService {
 
         let result = await this.generalFieldStudyModal
             .find({
-                field: { $regex: field },
+                field: { $regex: field, $options: 'i' },
             })
             .then((res: any) => {
                 return res

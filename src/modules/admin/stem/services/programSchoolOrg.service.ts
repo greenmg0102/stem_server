@@ -17,7 +17,7 @@ export class ProgramSchoolOrgService {
 
         let result = await this.programSchoolOrgModal
             .find({
-                name: { $regex: name },
+                name: { $regex: name, $options: 'i'  },
                 status: 1
             })
             .then((res: any) => {
