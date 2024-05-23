@@ -185,6 +185,9 @@ export class IntegrationSearchService {
     }
     async read(body: any): Promise<any> {
 
+	const requestTime = new Date();
+        console.log(`API Request Time: ${requestTime}`);
+
         let page = body.page
         let pageSize = body.pageSize
         let searchParameter = body.searchParameter
