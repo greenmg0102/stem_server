@@ -24,17 +24,22 @@ export class StemController {
         private stemService: StemService,
     ) { }
 
+
     @Post('/read')
     async read(@Body() body: any) {
-
         const hands = await this.stemService.read(body);
         return hands;
     }
 
     @Post('/create')
     async create(@Body() body: any) {
-
         const hands = await this.stemService.create(body);
+        return hands;
+    }
+
+    @Post('/dump-create')
+    async dumpCreate(@Body() body: any) {
+        const hands = await this.stemService.dumpCreate(body);
         return hands;
     }
 

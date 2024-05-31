@@ -9,6 +9,10 @@ import { School } from 'src/modules/admin/shool/schemas/school.schema';
 import { Opportunity } from 'src/modules/admin/opportuniy/schemas/opportunity.schema';
 import { GeneralFieldStudy } from 'src/modules/admin/general-field-study/schemas/general.field.study.service.schema';
 import { SpecificFieldStudy } from 'src/modules/admin/general-field-study/schemas/specific.field.study.service.schema';
+import { CareerPathCategory } from 'src/modules/admin/career-path-category/schemas/career-path-category.schema';
+import { Requirementcredential, RequirementcredentialSchema } from 'src/modules/admin/requirement-credential/schemas/requirement-credential.schema';
+import { Requirementage, RequirementageSchema } from 'src/modules/admin/requirement-age/schemas/requirement-age.schema';
+import { Educationlevel, EducationlevelSchema } from 'src/modules/admin/education-level/schemas/education-level.schema';
 import { Credential } from 'src/modules/admin/credential/schemas/credential.schema';
 
 @Injectable()
@@ -19,12 +23,14 @@ export class StemService {
     @InjectModel(ProgramSchoolOrg.name) private readonly programSchoolOrgModal: Model<ProgramSchoolOrg>,
     @InjectModel(ProgramSchoolType.name) private readonly programSchoolTypeModal: Model<ProgramSchoolType>,
     @InjectModel(School.name) private readonly schoolModal: Model<School>,
+    @InjectModel(Opportunity.name) private readonly opportunityModal: Model<Opportunity>,
     @InjectModel(SpecificFieldStudy.name) private readonly specificFieldStudyModal: Model<SpecificFieldStudy>,
     @InjectModel(GeneralFieldStudy.name) private readonly generalFieldStudyModal: Model<GeneralFieldStudy>,
     @InjectModel(Credential.name) private readonly credentialModal: Model<Credential>,
-    @InjectModel(Opportunity.name) private readonly opportunityModal: Model<Opportunity>,
-    @InjectModel(Stem.name) private readonly stemModal: Model<Stem>,
-
+    @InjectModel(Educationlevel.name) private readonly educationlevelModal: Model<Educationlevel>,
+    @InjectModel(Requirementcredential.name) private readonly requirementcredentialModal: Model<Requirementcredential>,
+    @InjectModel(Requirementage.name) private readonly requirementageModal: Model<Requirementage>,
+    @InjectModel(Stem.name) private readonly stemModal: Model<Stem>
   ) { }
 
   async read(body: any): Promise<any> {
@@ -202,6 +208,138 @@ export class StemService {
     }
 
   }
+
+
+  async dumpCreate(body: any): Promise<any> {
+
+    if (body.name === "ProgramSchoolOrg") {
+
+      console.log("ProgramSchoolOrg");
+      await this.programSchoolOrgModal.deleteMany({});
+
+      for (let i = 0; i < body.list.length; i++) {
+        console.log(i);
+        let newStem = new this.programSchoolOrgModal(body.list[i]);
+        await newStem.save()
+      }
+
+    } else if (body.name === "Program School / Org Type") {
+
+      console.log("Program School / Org Type");
+      await this.programSchoolTypeModal.deleteMany({});
+
+      for (let i = 0; i < body.list.length; i++) {
+        let data = { type: body.list[i], status: 1 }
+        console.log(i);
+        let newStem = new this.programSchoolTypeModal(data);
+        await newStem.save()
+      }
+
+    } else if (body.name === "Eligible Credits Transfer School / Credentials School") {
+
+      console.log("Eligible Credits Transfer School / Credentials School");
+      await this.schoolModal.deleteMany({});
+
+      for (let i = 0; i < body.list.length; i++) {
+        let data = { school: body.list[i], status: 1 }
+        console.log(i);
+        let newStem = new this.schoolModal(data);
+        await newStem.save()
+      }
+
+    } else if (body.name === "Opportunity") {
+
+      console.log("Opportunity");
+      await this.opportunityModal.deleteMany({});
+
+      for (let i = 0; i < body.list.length; i++) {
+        let data = { opportunity: body.list[i], status: 1 }
+        console.log(i);
+        let newStem = new this.opportunityModal(data);
+        await newStem.save()
+      }
+
+    } else if (body.name === "Specific Area of Study") {
+
+      console.log("Specific Area of Study");
+      await this.specificFieldStudyModal.deleteMany({});
+
+      for (let i = 0; i < body.list.length; i++) {
+        let data = { specificField: body.list[i], status: 1 }
+        console.log(i);
+        let newStem = new this.specificFieldStudyModal(data);
+        await newStem.save()
+      }
+
+    } else if (body.name === "Career Path Category") {
+
+      console.log("Career Path Category");
+      await this.generalFieldStudyModal.deleteMany({});
+
+      for (let i = 0; i < body.list.length; i++) {
+        let data = { field: body.list[i], status: 1 }
+        console.log(i);
+        let newStem = new this.generalFieldStudyModal(data);
+        await newStem.save()
+      }
+
+    } else if (body.name === "Credential") {
+
+      console.log("Credential");
+      await this.credentialModal.deleteMany({});
+
+      for (let i = 0; i < body.list.length; i++) {
+        let data = { credential: body.list[i], status: 1 }
+        console.log(i);
+        let newStem = new this.credentialModal(data);
+        await newStem.save()
+      }
+
+    } else if (body.name === "Applicant Requirement: Education Level") {
+
+      console.log("Applicant Requirement: Education Level");
+      await this.educationlevelModal.deleteMany({});
+
+      for (let i = 0; i < body.list.length; i++) {
+        let data = { educationlevel: body.list[i], status: 1 }
+        console.log(i);
+        let newStem = new this.educationlevelModal(data);
+        await newStem.save()
+      }
+
+    } else if (body.name === "Applicant Requirement: Credential") {
+
+      console.log("Applicant Requirement: Credential");
+      await this.requirementcredentialModal.deleteMany({});
+
+      for (let i = 0; i < body.list.length; i++) {
+        let data = { requirementcredential: body.list[i], status: 1 }
+        console.log(i);
+        let newStem = new this.requirementcredentialModal(data);
+        await newStem.save()
+      }
+
+    } else if (body.name === "Applicant Requirement: Age") {
+
+      console.log("Applicant Requirement: Age");
+      await this.requirementageModal.deleteMany({});
+
+      for (let i = 0; i < body.list.length; i++) {
+        let data = { requirementage: body.list[i], status: 1 }
+        console.log(i);
+        let newStem = new this.requirementageModal(data);
+        await newStem.save()
+      }
+
+    }
+
+
+
+
+    return
+
+  }
+
 
   async create(body: any): Promise<any> {
 

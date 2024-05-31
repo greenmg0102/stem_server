@@ -21,13 +21,13 @@ export class PaymentController {
         return await this.generateService.payLogCreate(body)
     }
 
-    
+
     @Post('/crypto/paylog-read')
     @HttpCode(200)
     async payLogRead(@Body() body: any) {
         return await this.generateService.payLogRead(body)
     }
 
-    
+
 
 }

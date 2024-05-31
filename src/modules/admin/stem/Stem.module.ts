@@ -25,6 +25,10 @@ import { SpecificFieldStudy, SpecificFieldStudySchema } from 'src/modules/admin/
 import { Opportunity, OpportunitySchema } from 'src/modules/admin/opportuniy/schemas/opportunity.schema';
 import { GeneralFieldStudy, GeneralFieldStudySchema } from 'src/modules/admin/general-field-study/schemas/general.field.study.service.schema';
 import { Credential, CredentialSchema } from 'src/modules/admin/credential/schemas/credential.schema';
+import { CareerPathCategory, CareerPathCategorySchema } from 'src/modules/admin/career-path-category/schemas/career-path-category.schema';
+import { Requirementcredential, RequirementcredentialSchema } from 'src/modules/admin/requirement-credential/schemas/requirement-credential.schema';
+import { Requirementage, RequirementageSchema } from 'src/modules/admin/requirement-age/schemas/requirement-age.schema';
+import { Educationlevel, EducationlevelSchema } from 'src/modules/admin/education-level/schemas/education-level.schema';
 import { Stem, StemSchema } from 'src/modules/admin/stem/schemas/stem.schema';
 
 @Module({
@@ -33,6 +37,10 @@ import { Stem, StemSchema } from 'src/modules/admin/stem/schemas/stem.schema';
     { name: GeneralFieldStudy.name, schema: GeneralFieldStudySchema },
     { name: SpecificFieldStudy.name, schema: SpecificFieldStudySchema },
     { name: ProgramSchoolOrg.name, schema: ProgramSchoolOrgSchema },
+    { name: CareerPathCategory.name, schema: CareerPathCategorySchema },
+    { name: Requirementcredential.name, schema: RequirementcredentialSchema },
+    { name: Requirementage.name, schema: RequirementageSchema },
+    { name: Educationlevel.name, schema: EducationlevelSchema },
     { name: Opportunity.name, schema: OpportunitySchema },
     { name: School.name, schema: SchoolSchema },
     { name: Credential.name, schema: CredentialSchema },

@@ -47,7 +47,7 @@ export class Stem {
 
   @Prop({ required: false })
   OpportunityLink: string
-  
+
   @Prop({ type: SchemaTypes.ObjectId, ref: 'opportunitys' })
   Opportunity: Opportunity
 
