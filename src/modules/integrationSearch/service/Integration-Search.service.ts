@@ -7,6 +7,11 @@ import { ProgramSchoolType } from 'src/modules/admin/program-school-type/schemas
 import { School } from 'src/modules/admin/shool/schemas/school.schema';
 import { Opportunity } from 'src/modules/admin/opportuniy/schemas/opportunity.schema';
 import { GeneralFieldStudy } from 'src/modules/admin/general-field-study/schemas/general.field.study.service.schema';
+import { SpecificFieldStudy } from 'src/modules/admin/general-field-study/schemas/specific.field.study.service.schema';
+import { Requirementcredential } from 'src/modules/admin/requirement-credential/schemas/requirement-credential.schema';
+import { Requirementage } from 'src/modules/admin/requirement-age/schemas/requirement-age.schema';
+import { Educationlevel } from 'src/modules/admin/education-level/schemas/education-level.schema';
+
 import { Credential } from 'src/modules/admin/credential/schemas/credential.schema';
 import { Stem } from 'src/modules/admin/stem/schemas/stem.schema';
 
@@ -20,6 +25,10 @@ export class IntegrationSearchService {
         @InjectModel(Opportunity.name) private readonly opportunityModal: Model<Opportunity>,
         @InjectModel(GeneralFieldStudy.name) private readonly generalFieldStudyModal: Model<GeneralFieldStudy>,
         @InjectModel(Credential.name) private readonly credentialModal: Model<Credential>,
+        @InjectModel(SpecificFieldStudy.name) private readonly specificFieldStudyModal: Model<SpecificFieldStudy>,
+        @InjectModel(Educationlevel.name) private readonly educationlevelModal: Model<Educationlevel>,
+        @InjectModel(Requirementcredential.name) private readonly requirementcredentialModal: Model<Requirementcredential>,
+        @InjectModel(Requirementage.name) private readonly requirementageModal: Model<Requirementage>,
         @InjectModel(Stem.name) private readonly stemModal: Model<Stem>,
     ) { }
 
@@ -42,8 +51,12 @@ export class IntegrationSearchService {
         let schoolOrgTypeIdList = searchParameter.length > 0 && body.programSchoolOrgType.length === 0 ? await this.programSchoolTypeModal.find({ type: { $regex: searchParameter } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
         let schoolIdList = searchParameter.length > 0 && body.credentialSchool.length === 0 ? await this.schoolModal.find({ school: { $regex: searchParameter } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
         let opportunityIdList = searchParameter.length > 0 && body.Opportunity.length === 0 ? await this.opportunityModal.find({ opportunity: { $regex: searchParameter } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
+        let specificFieldStudyIdList = searchParameter.length > 0 && body.credential.length === 0 ? await this.specificFieldStudyModal.find({ specificField: { $regex: searchParameter } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
         let generalFieldStudyIdList = searchParameter.length > 0 && body.field.length === 0 ? await this.generalFieldStudyModal.find({ field: { $regex: searchParameter } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
         let credentialIdList = searchParameter.length > 0 && body.credential.length === 0 ? await this.credentialModal.find({ credential: { $regex: searchParameter } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
+        let educationlevelModalIdList = searchParameter.length > 0 && body.credential.length === 0 ? await this.educationlevelModal.find({ educationlevel: { $regex: searchParameter } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
+        let requirementcredentialModalIdList = searchParameter.length > 0 && body.credential.length === 0 ? await this.requirementcredentialModal.find({ requirementcredential: { $regex: searchParameter } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
+        let requirementageModalIdList = searchParameter.length > 0 && body.credential.length === 0 ? await this.requirementageModal.find({ requirementage: { $regex: searchParameter } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
 
 
         let programSchoolOrgIdList = body.programSchoolOrg.map((item: any) => new ObjectId(item.value))
@@ -88,6 +101,11 @@ export class IntegrationSearchService {
 
         if (body.credential.length > 0) conditionPairPipeline.credential = { $in: credentialList }
         else orConditions.push({ credential: { $in: credentialIdList } });
+
+        orConditions.push({ SpecificAreaofStudy: { $in: specificFieldStudyIdList } });
+        orConditions.push({ EducationLevel: { $in: educationlevelModalIdList } });
+        orConditions.push({ ApplicantRequirementCredential: { $in: requirementcredentialModalIdList } });
+        orConditions.push({ Age: { $in: requirementageModalIdList } });
 
 
         if (orConditions.length > 0) {
@@ -205,8 +223,13 @@ export class IntegrationSearchService {
         let schoolOrgTypeIdList = searchParameter.length > 0 && body.programSchoolOrgType.length === 0 ? await this.programSchoolTypeModal.find({ type: { $regex: searchParameter } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
         let schoolIdList = searchParameter.length > 0 && body.credentialSchool.length === 0 ? await this.schoolModal.find({ school: { $regex: searchParameter } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
         let opportunityIdList = searchParameter.length > 0 && body.Opportunity.length === 0 ? await this.opportunityModal.find({ opportunity: { $regex: searchParameter } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
+        let specificFieldStudyIdList = searchParameter.length > 0 && body.credential.length === 0 ? await this.specificFieldStudyModal.find({ specificField: { $regex: searchParameter } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
         let generalFieldStudyIdList = searchParameter.length > 0 && body.field.length === 0 ? await this.generalFieldStudyModal.find({ field: { $regex: searchParameter } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
         let credentialIdList = searchParameter.length > 0 && body.credential.length === 0 ? await this.credentialModal.find({ credential: { $regex: searchParameter } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
+        let educationlevelModalIdList = searchParameter.length > 0 && body.credential.length === 0 ? await this.educationlevelModal.find({ educationlevel: { $regex: searchParameter } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
+        let requirementcredentialModalIdList = searchParameter.length > 0 && body.credential.length === 0 ? await this.requirementcredentialModal.find({ requirementcredential: { $regex: searchParameter } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
+        let requirementageModalIdList = searchParameter.length > 0 && body.credential.length === 0 ? await this.requirementageModal.find({ requirementage: { $regex: searchParameter } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
+
 
 
         let programSchoolOrgIdList = body.programSchoolOrg.map((item: any) => new ObjectId(item.value))
@@ -252,6 +275,10 @@ export class IntegrationSearchService {
         if (body.credential.length > 0) conditionPairPipeline.credential = { $in: credentialList }
         else orConditions.push({ credential: { $in: credentialIdList } });
 
+        orConditions.push({ SpecificAreaofStudy: { $in: specificFieldStudyIdList } });
+        orConditions.push({ EducationLevel: { $in: educationlevelModalIdList } });
+        orConditions.push({ ApplicantRequirementCredential: { $in: requirementcredentialModalIdList } });
+        orConditions.push({ Age: { $in: requirementageModalIdList } });
 
         if (orConditions.length > 0) {
             conditionPairPipeline.$or = orConditions;
@@ -423,6 +450,17 @@ export class IntegrationSearchService {
             },
             {
                 $lookup: {
+                    from: 'specificfieldstudys',
+                    localField: 'SpecificAreaofStudy',
+                    foreignField: '_id',
+                    as: 'SpecificAreaofStudy',
+                },
+            },
+            {
+                $unwind: '$SpecificAreaofStudy',
+            },
+            {
+                $lookup: {
                     from: 'credentials',
                     localField: 'credential',
                     foreignField: '_id',
@@ -433,12 +471,55 @@ export class IntegrationSearchService {
                 $unwind: '$credential',
             },
             {
+                $lookup: {
+                    from: 'educationlevels',
+                    localField: 'EducationLevel',
+                    foreignField: '_id',
+                    as: 'EducationLevel',
+                },
+            },
+            {
+                $unwind: {
+                    path: '$EducationLevel',
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $lookup: {
+                    from: 'requirementcredentials',
+                    localField: 'ApplicantRequirementCredential',
+                    foreignField: '_id',
+                    as: 'ApplicantRequirementCredential',
+                },
+            },
+            {
+                $unwind: {
+                    path: '$ApplicantRequirementCredential',
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $lookup: {
+                    from: 'requirementages',
+                    localField: 'Age',
+                    foreignField: '_id',
+                    as: 'Age',
+                },
+            },
+            {
+                $unwind: {
+                    path: '$Age',
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
                 $project: {
                     schoolOrg: 1,
                     schoolOrgType: 1,
                     credentialSchool: 1,
                     opportunity: 1,
                     field: 1,
+                    SpecificAreaofStudy: 1,
                     credential: 1,
                     CourseList: 1,
                     EducationLevel: 1,

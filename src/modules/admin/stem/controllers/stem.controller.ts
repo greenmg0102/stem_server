@@ -19,6 +19,7 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 
 @Controller('admin/stem')
+
 export class StemController {
     constructor(
         private stemService: StemService,
@@ -40,6 +41,12 @@ export class StemController {
     @Post('/dump-create')
     async dumpCreate(@Body() body: any) {
         const hands = await this.stemService.dumpCreate(body);
+        return hands;
+    }
+
+    @Post('/stem-stream')
+    async stemStream(@Body() body: any) {
+        const hands = await this.stemService.stemStream(body);
         return hands;
     }
 

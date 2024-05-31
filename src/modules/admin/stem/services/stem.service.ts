@@ -9,10 +9,9 @@ import { School } from 'src/modules/admin/shool/schemas/school.schema';
 import { Opportunity } from 'src/modules/admin/opportuniy/schemas/opportunity.schema';
 import { GeneralFieldStudy } from 'src/modules/admin/general-field-study/schemas/general.field.study.service.schema';
 import { SpecificFieldStudy } from 'src/modules/admin/general-field-study/schemas/specific.field.study.service.schema';
-import { CareerPathCategory } from 'src/modules/admin/career-path-category/schemas/career-path-category.schema';
-import { Requirementcredential, RequirementcredentialSchema } from 'src/modules/admin/requirement-credential/schemas/requirement-credential.schema';
-import { Requirementage, RequirementageSchema } from 'src/modules/admin/requirement-age/schemas/requirement-age.schema';
-import { Educationlevel, EducationlevelSchema } from 'src/modules/admin/education-level/schemas/education-level.schema';
+import { Requirementcredential } from 'src/modules/admin/requirement-credential/schemas/requirement-credential.schema';
+import { Requirementage } from 'src/modules/admin/requirement-age/schemas/requirement-age.schema';
+import { Educationlevel } from 'src/modules/admin/education-level/schemas/education-level.schema';
 import { Credential } from 'src/modules/admin/credential/schemas/credential.schema';
 
 @Injectable()
@@ -333,13 +332,53 @@ export class StemService {
 
     }
 
-
-
-
     return
 
   }
 
+  async stemStream(body: any): Promise<any> {
+
+    console.log("~~~ stem ~~~", body.i);
+
+    if (body.i === 0) await this.stemModal.deleteMany({});
+
+    for (let i = 0; i < body.list.length; i++) {
+
+      let programSchoolOrgId = await this.programSchoolOrgModal.findOne({ name: body.list[i][0] }).then((res: any) => { return res === null ? undefined : res._id })
+      let programSchoolOrgTypeId = await this.programSchoolTypeModal.findOne({ type: body.list[i][5] }).then((res: any) => { return res === null ? undefined : res._id })
+      let credentialSchoolId = await this.schoolModal.findOne({ school: body.list[i][6] }).then((res: any) => { return res === null ? undefined : res._id })
+      let OpportunityId = await this.opportunityModal.findOne({ opportunity: body.list[i][7] }).then((res: any) => { return res === null ? undefined : res._id })
+      let SpecificAreaofStudyId = await this.specificFieldStudyModal.findOne({ specificField: body.list[i][8] }).then((res: any) => { return res === null ? undefined : res._id })
+      let fieldId = await this.generalFieldStudyModal.findOne({ field: body.list[i][9] }).then((res: any) => { return res === null ? undefined : res._id })
+      let CourseListString = body.list[i][10]
+      let credentialId = await this.credentialModal.findOne({ credential: body.list[i][11] }).then((res: any) => { return res === null ? undefined : res._id })
+      let EducationLevelId = await this.educationlevelModal.findOne({ educationlevel: body.list[i][12] }).then((res: any) => { return res === null ? undefined : res._id })
+      let ApplicantRequirementCredentialId = await this.requirementcredentialModal.findOne({ requirementcredential: body.list[i][13] }).then((res: any) => { return res === null ? undefined : res._id })
+      let AgeId = await this.requirementageModal.findOne({ requirementage: body.list[i][14] }).then((res: any) => { return res === null ? undefined : res._id })
+      let OpportunityLink = body.list[i][15]
+
+      let data = {
+        programSchoolOrg: programSchoolOrgId,
+        programSchoolOrgType: programSchoolOrgTypeId,
+        credentialSchool: credentialSchoolId,
+        Opportunity: OpportunityId,
+        SpecificAreaofStudy: SpecificAreaofStudyId,
+        field: fieldId,
+        credential: credentialId,
+        EducationLevel: EducationLevelId,
+        ApplicantRequirementCredential: ApplicantRequirementCredentialId,
+        Age: AgeId,
+        CourseList: CourseListString,
+        OpportunityLink: OpportunityLink,
+      }
+
+      console.log(i);
+      let newStem = new this.stemModal(data);
+      await newStem.save()
+
+    }
+
+  }
 
   async create(body: any): Promise<any> {
 
