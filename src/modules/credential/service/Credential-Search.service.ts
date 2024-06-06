@@ -1,26 +1,26 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Schema as MongooseSchema } from 'mongoose';
-import { Opportunity } from 'src/modules/admin/opportuniy/schemas/opportunity.schema';
+import { Credential } from 'src/modules/admin/credential/schemas/credential.schema';
 import { Stem } from 'src/modules/admin/stem/schemas/stem.schema';
 
 @Injectable()
-export class OpportunitySearchService {
+export class CredentialSearchService {
 
     constructor(
-        @InjectModel(Opportunity.name) private readonly opportunityModal: Model<Opportunity>,
+        @InjectModel(Credential.name) private readonly credentialModal: Model<Credential>,
         @InjectModel(Stem.name) private readonly stemModal: Model<Stem>,
     ) { }
 
     async read(body: any): Promise<any> {
 
 
-        let opportunityResult = await this.opportunityModal.find({ opportunity: { $regex: body.searchValue, $options: "i" } })
+        let credentialResult = await this.credentialModal.find({ credential: { $regex: body.searchValue, $options: "i" } })
 
-        let bufferOpportunity = opportunityResult.map((item: any) => item._id)
+        let bufferCredential= credentialResult.map((item: any) => item._id)
 
         let conditionPairPipeline = {
-            Opportunity: { $in: bufferOpportunity },
+            Opportunity: { $in: bufferCredential },
         };
 
         const handsPipeline = [
@@ -115,21 +115,21 @@ export class OpportunitySearchService {
 
     async filterRead(): Promise<any> {
 
-        let opportunityResult = await this.stemModal.aggregate([
+        let credentialResult = await this.stemModal.aggregate([
             {
                 $lookup: {
-                    from: 'opportunitys',
-                    localField: 'Opportunity',
+                    from: 'credentials',
+                    localField: 'credential',
                     foreignField: '_id',
-                    as: 'opportunity',
+                    as: 'credential',
                 },
             },
             {
-                $unwind: '$opportunity',
+                $unwind: '$credential',
             },
             {
                 $group: {
-                    _id: "$opportunity.opportunity",
+                    _id: "$credential.credential",
                     count: { $sum: 1 }
                 }
             }
@@ -137,21 +137,21 @@ export class OpportunitySearchService {
 
         return {
             isOkay: true,
-            result: opportunityResult
+            result: credentialResult
         }
     }
 
-    async stemAccordingtoOpportunityRead(body: any): Promise<any> {
+    async stemAccordingtoCredentialRead(body: any): Promise<any> {
 
         console.log("body", body);
 
 
-        let opportunityId = await this.opportunityModal.findOne({ opportunity: body.Opportunity }).then((res: any) => {
+        let credentialId = await this.credentialModal.findOne({ credential: body.credential }).then((res: any) => {
             return res._id
         })
 
         let conditionPairPipeline = {
-            Opportunity: { $in: [opportunityId] },
+            credential: { $in: [credentialId] },
         };
 
         const handsPipeline = [

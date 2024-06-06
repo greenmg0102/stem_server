@@ -35,6 +35,7 @@ import { ProgramSchoolTypeModule } from './modules/admin/program-school-type/pro
 import { GeneralFieldStudyModule } from './modules/admin/general-field-study/GeneralFieldStudy.module';
 import { OpportunityModule } from './modules/admin/opportuniy/Opportunity.module';
 import { OpportunitySearchModule } from './modules/opportunity/Opportunity-Search.module';
+import { CredentialSearchModule } from './modules/credential/Credential-Search.module';
 
 import { CredentialModule } from './modules/admin/credential/Credential.module';
 import { ProgramSchoolOrgModule } from './modules/admin/program-school-org/programSchoolOrg.module';
@@ -119,6 +120,7 @@ import * as path from 'path'; // Import the path module
     ProgramSchoolTypeModule,
     GeneralFieldStudyModule,
     OpportunitySearchModule,
+    CredentialSearchModule,
     OpportunityModule,
     CredentialModule,
     ProgramSchoolOrgModule,
