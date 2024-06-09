@@ -1,26 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Schema as MongooseSchema } from 'mongoose';
-import { Opportunity } from 'src/modules/admin/opportuniy/schemas/opportunity.schema';
+import { GeneralFieldStudy } from 'src/modules/admin/general-field-study/schemas/general.field.study.service.schema';
 import { Stem } from 'src/modules/admin/stem/schemas/stem.schema';
 
 @Injectable()
-export class OpportunitySearchService {
+export class GeneralFieldService {
 
     constructor(
-        @InjectModel(Opportunity.name) private readonly opportunityModal: Model<Opportunity>,
+        @InjectModel(GeneralFieldStudy.name) private readonly generalFieldStudyModal: Model<GeneralFieldStudy>,
         @InjectModel(Stem.name) private readonly stemModal: Model<Stem>,
     ) { }
 
     async read(body: any): Promise<any> {
 
+        let generalFieldResult = await this.generalFieldStudyModal.find({ field: { $regex: body.searchValue, $options: "i" } })
 
-        let opportunityResult = await this.opportunityModal.find({ opportunity: { $regex: body.searchValue, $options: "i" } })
-
-        let bufferOpportunity = opportunityResult.map((item: any) => item._id)
+        let bufferGeneralFieldResult= generalFieldResult.map((item: any) => item._id)
 
         let conditionPairPipeline = {
-            Opportunity: { $in: bufferOpportunity },
+            Opportunity: { $in: bufferGeneralFieldResult },
         };
 
         const handsPipeline = [
@@ -115,24 +114,24 @@ export class OpportunitySearchService {
 
     async filterRead(): Promise<any> {
 
-        console.log('@@@@');
+        console.log("!!!!");
         
 
-        let opportunityResult = await this.stemModal.aggregate([
+        let generalResult = await this.stemModal.aggregate([
             {
                 $lookup: {
-                    from: 'opportunitys',
-                    localField: 'Opportunity',
+                    from: 'generalfieldstudys',
+                    localField: 'field',
                     foreignField: '_id',
-                    as: 'opportunity',
+                    as: 'field',
                 },
             },
             {
-                $unwind: '$opportunity',
+                $unwind: '$field',
             },
             {
                 $group: {
-                    _id: "$opportunity.opportunity",
+                    _id: "$field.field",
                     count: { $sum: 1 }
                 }
             }
@@ -140,21 +139,18 @@ export class OpportunitySearchService {
 
         return {
             isOkay: true,
-            result: opportunityResult
+            result: generalResult
         }
     }
 
-    async stemAccordingtoOpportunityRead(body: any): Promise<any> {
+    async stemAccordingtoGeneralFieldRead(body: any): Promise<any> {
 
-        console.log("body", body);
-
-
-        let opportunityId = await this.opportunityModal.findOne({ opportunity: body.Opportunity }).then((res: any) => {
+        let generalFieldResult = await this.generalFieldStudyModal.findOne({ field: body.field }).then((res: any) => {
             return res._id
         })
 
         let conditionPairPipeline = {
-            Opportunity: { $in: [opportunityId] },
+            field: { $in: [generalFieldResult] },
         };
 
         const handsPipeline = [
