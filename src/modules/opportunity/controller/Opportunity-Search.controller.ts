@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { OpportunitySearchService } from '../service/Opportunity-Search.service'
 
-@Controller('user/opportunity')
+@Controller('/user/opportunity')
 export class OpportunitySearchController {
     constructor(
         private opportunitySearchService: OpportunitySearchService,
@@ -29,6 +29,8 @@ export class OpportunitySearchController {
     @Post('/stem-accordingto-opportunity-read')
     async stemAccordingtoOpportunityRead(@Body() body: any) {
 
+        console.log('!!!!!');
+        
         const hands = await this.opportunitySearchService.stemAccordingtoOpportunityRead(body);
         return hands;
     }

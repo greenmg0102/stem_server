@@ -124,15 +124,15 @@ export class OpportunitySearchService {
                     from: 'opportunitys',
                     localField: 'Opportunity',
                     foreignField: '_id',
-                    as: 'opportunity',
+                    as: 'Opportunity',
                 },
             },
             {
-                $unwind: '$opportunity',
+                $unwind: '$Opportunity',
             },
             {
                 $group: {
-                    _id: "$opportunity.opportunity",
+                    _id: "$Opportunity.opportunity",
                     count: { $sum: 1 }
                 }
             }
