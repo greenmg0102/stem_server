@@ -164,8 +164,12 @@ export class GeneralFieldService {
 
     async stemAccordingtoGeneralFieldRead(body: any): Promise<any> {
 
+        console.log("stemAccordingtoGeneralFieldRead", body);
+
         let searchParameter = body.searchParameter
         const regexArray = searchParameter.trim().split(" ").map((param: any) => new RegExp(param, 'i'));
+
+        console.log("regexArray",regexArray);
 
         let schoolOrgIdList = await this.programSchoolOrgModal.find({
             $or: [
@@ -177,12 +181,12 @@ export class GeneralFieldService {
             ]
         }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id)))
 
-        let generalFieldResult = await this.generalFieldStudyModal.findOne({ field: body.field }).then((res: any) => {
+        let generalFieldId = await this.generalFieldStudyModal.findOne({ field: body.field }).then((res: any) => {
             return res._id
         })
 
         let orConditions: any[] = [
-            { field: generalFieldResult }
+            { field: generalFieldId }
         ];
 
         let conditionPairPipeline = {
