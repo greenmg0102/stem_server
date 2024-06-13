@@ -29,8 +29,6 @@ export class OpportunitySearchController {
     @Post('/stem-accordingto-opportunity-read')
     async stemAccordingtoOpportunityRead(@Body() body: any) {
 
-        console.log('!!!!!');
-        
         const hands = await this.opportunitySearchService.stemAccordingtoOpportunityRead(body);
         return hands;
     }

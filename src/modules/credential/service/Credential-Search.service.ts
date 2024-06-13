@@ -1,6 +1,16 @@
 import { Injectable } from '@nestjs/common';
+import { ObjectId } from 'mongodb';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Schema as MongooseSchema } from 'mongoose';
+import { ProgramSchoolOrg } from 'src/modules/admin/program-school-org/schemas/program-school-org.schema';
+import { ProgramSchoolType } from 'src/modules/admin/program-school-type/schemas/program.school.type.schema';
+import { School } from 'src/modules/admin/shool/schemas/school.schema';
+import { Opportunity } from 'src/modules/admin/opportuniy/schemas/opportunity.schema';
+import { GeneralFieldStudy } from 'src/modules/admin/general-field-study/schemas/general.field.study.service.schema';
+import { SpecificFieldStudy } from 'src/modules/admin/general-field-study/schemas/specific.field.study.service.schema';
+import { Requirementcredential } from 'src/modules/admin/requirement-credential/schemas/requirement-credential.schema';
+import { Requirementage } from 'src/modules/admin/requirement-age/schemas/requirement-age.schema';
+import { Educationlevel } from 'src/modules/admin/education-level/schemas/education-level.schema';
 import { Credential } from 'src/modules/admin/credential/schemas/credential.schema';
 import { Stem } from 'src/modules/admin/stem/schemas/stem.schema';
 
@@ -8,7 +18,16 @@ import { Stem } from 'src/modules/admin/stem/schemas/stem.schema';
 export class CredentialSearchService {
 
     constructor(
+        @InjectModel(ProgramSchoolOrg.name) private readonly programSchoolOrgModal: Model<ProgramSchoolOrg>,
+        @InjectModel(ProgramSchoolType.name) private readonly programSchoolTypeModal: Model<ProgramSchoolType>,
+        @InjectModel(School.name) private readonly schoolModal: Model<School>,
+        @InjectModel(Opportunity.name) private readonly opportunityModal: Model<Opportunity>,
+        @InjectModel(GeneralFieldStudy.name) private readonly generalFieldStudyModal: Model<GeneralFieldStudy>,
         @InjectModel(Credential.name) private readonly credentialModal: Model<Credential>,
+        @InjectModel(SpecificFieldStudy.name) private readonly specificFieldStudyModal: Model<SpecificFieldStudy>,
+        @InjectModel(Educationlevel.name) private readonly educationlevelModal: Model<Educationlevel>,
+        @InjectModel(Requirementcredential.name) private readonly requirementcredentialModal: Model<Requirementcredential>,
+        @InjectModel(Requirementage.name) private readonly requirementageModal: Model<Requirementage>,
         @InjectModel(Stem.name) private readonly stemModal: Model<Stem>,
     ) { }
 
@@ -145,14 +164,34 @@ export class CredentialSearchService {
 
         console.log("body", body);
 
+        let searchParameter = body.searchParameter
+        const regexArray = searchParameter.trim().split(" ").map((param: any) => new RegExp(param, 'i'));
+
+        let schoolOrgIdList = await this.programSchoolOrgModal.find({
+            $or: [
+                { name: { $in: regexArray } },
+                { address: { $in: regexArray } },
+                { city: { $in: regexArray } },
+                { zip: { $in: regexArray } },
+                { neighborhood: { $in: regexArray } }
+            ]
+        }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id)))
 
         let credentialId = await this.credentialModal.findOne({ credential: body.credential }).then((res: any) => {
             return res._id
         })
 
+        
+        let orConditions: any[] = [
+            { credential: credentialId }
+        ];
+
         let conditionPairPipeline = {
-            credential: { $in: [credentialId] },
+            $and: orConditions
         };
+
+        if (schoolOrgIdList.length > 0) orConditions.push({ programSchoolOrg: { $in: schoolOrgIdList } });
+
 
         const handsPipeline = [
             { $match: conditionPairPipeline },
@@ -237,18 +276,20 @@ export class CredentialSearchService {
                     OpportunityLink: 1
                 }
             },
-            { $skip: body.page - 1 },
-            { $limit: (body.page) * body.pageSize }
+            { $skip: (body.page - 1) * body.pageSize },
+            { $limit: body.pageSize }
         ];
 
+        const total = await this.stemModal.countDocuments(conditionPairPipeline);
         const result = await this.stemModal.aggregate(handsPipeline).exec()
+
+        console.log(total, result.length);
 
         return {
             isOkay: true,
-            result: result
+            result: result,
+            totalCount: total
         }
-
-
     }
 
 }

@@ -22,7 +22,7 @@ export class AuthController {
     if (tokens.result) {
       return res.status(200).json({
         result: true,
-        redirectUrl: `http://104.128.55.140:5173/sign-in?accessToken=${tokens.tokens.accessToken}&refreshToken=${tokens.refreshToken}`,
+        redirectUrl: `http://104.128.55.14:5173/sign-in?accessToken=${tokens.tokens.accessToken}&refreshToken=${tokens.refreshToken}`,
       });
     } else {
       return res.status(200).json({
@@ -47,11 +47,11 @@ export class AuthController {
     
     if (error) {
       return res.redirect(
-        `http://104.128.55.140:5173/sign-in?status=${error.status}&message=${error.message}`,
+        `http://104.128.55.14:5173/sign-in?status=${error.status}&message=${error.message}`,
       )
     }
     return res.redirect(
-      `http://104.128.55.140:5173/sign-in?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`,
+      `http://104.128.55.14:5173/sign-in?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`,
     )
   }
 
@@ -67,11 +67,11 @@ export class AuthController {
     const { tokens, error } = req.user
     if (error) {
       return res.redirect(
-        `http://104.128.55.140:5173/sign-in?status=${error.status}&message=${error.message}`,
+        `http://104.128.55.14:5173/sign-in?status=${error.status}&message=${error.message}`,
       )
     }
     return res.redirect(
-      `http://104.128.55.140:5173/sign-in?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`,
+      `http://104.128.55.14:5173/sign-in?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`,
     )
   }
 
