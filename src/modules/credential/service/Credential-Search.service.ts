@@ -193,6 +193,11 @@ export class CredentialSearchService {
         if (schoolOrgIdList.length > 0) orConditions.push({ programSchoolOrg: { $in: schoolOrgIdList } });
 
 
+        console.log('real time search', body.sortCondition);
+
+        let sortField: string = body.sortCondition.split(':')[0];
+        let direction: 1 | -1 = body.sortCondition.split(':')[1] === '1' ? 1 : -1;
+
         const handsPipeline = [
             { $match: conditionPairPipeline },
             {
@@ -260,6 +265,11 @@ export class CredentialSearchService {
             },
             {
                 $unwind: '$credential',
+            },
+            {
+                $sort: {
+                    [sortField]: direction
+                }
             },
             {
                 $project: {

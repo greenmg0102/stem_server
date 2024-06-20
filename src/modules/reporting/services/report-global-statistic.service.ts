@@ -315,6 +315,7 @@ export class ReportGlobalStatisticService {
         let sumExpected = 0;
         let sumShow = 0;
         let sumNotShowHand = 0;
+        let totalCount = 0;
 
         let count = 0;
 
@@ -327,7 +328,7 @@ export class ReportGlobalStatisticService {
 
         for (let i = 0; i < statistics.length; i++) {
 
-            for (let j = 0; j < i; j++) {
+            for (let j = 0; j < i; j ++) {
 
                 sumBB += statistics[j].bb100;
                 sumExpected += statistics[j].allinbb100;
@@ -348,13 +349,12 @@ export class ReportGlobalStatisticService {
                     sumExpected = 0;
                     sumShow = 0;
                     sumNotShowHand = 0;
-
+                    totalCount = statistics.length;
                     count = 0;
                 }
             }
         }
 
         return real;
-
     }
 }

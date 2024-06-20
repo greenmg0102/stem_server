@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ObjectId } from 'mongodb';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Schema as MongooseSchema } from 'mongoose';
+import { PipelineStage, Model, Schema as MongooseSchema } from 'mongoose';
 import { ProgramSchoolOrg } from 'src/modules/admin/program-school-org/schemas/program-school-org.schema';
 import { ProgramSchoolType } from 'src/modules/admin/program-school-type/schemas/program.school.type.schema';
 import { School } from 'src/modules/admin/shool/schemas/school.schema';
@@ -40,8 +40,7 @@ export class GeneralFieldService {
         let conditionPairPipeline = {
             Opportunity: { $in: bufferGeneralFieldResult },
         };
-
-        const handsPipeline = [
+        const handsPipeline: PipelineStage[] = [
             { $match: conditionPairPipeline },
             {
                 $lookup: {
@@ -169,8 +168,6 @@ export class GeneralFieldService {
         let searchParameter = body.searchParameter
         const regexArray = searchParameter.trim().split(" ").map((param: any) => new RegExp(param, 'i'));
 
-        console.log("regexArray",regexArray);
-
         let schoolOrgIdList = await this.programSchoolOrgModal.find({
             $or: [
                 { name: { $in: regexArray } },
@@ -195,6 +192,11 @@ export class GeneralFieldService {
 
         if (schoolOrgIdList.length > 0) orConditions.push({ programSchoolOrg: { $in: schoolOrgIdList } });
 
+
+        console.log('real time search', body.sortCondition);
+
+        let sortField: string = body.sortCondition.split(':')[0];
+        let direction: 1 | -1 = body.sortCondition.split(':')[1] === '1' ? 1 : -1;
 
         const handsPipeline = [
             { $match: conditionPairPipeline },
@@ -263,6 +265,11 @@ export class GeneralFieldService {
             },
             {
                 $unwind: '$credential',
+            },
+            {
+                $sort: {
+                    [sortField]: direction
+                }
             },
             {
                 $project: {

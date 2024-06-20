@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ObjectId } from 'mongodb';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Schema as MongooseSchema } from 'mongoose';
+import { PipelineStage, Model, Schema as MongooseSchema } from 'mongoose';
 
 import { ProgramSchoolOrg } from 'src/modules/admin/program-school-org/schemas/program-school-org.schema';
 import { ProgramSchoolType } from 'src/modules/admin/program-school-type/schemas/program.school.type.schema';
@@ -42,7 +42,7 @@ export class OpportunitySearchService {
             Opportunity: { $in: bufferOpportunity },
         };
 
-        const handsPipeline = [
+        const handsPipeline: PipelineStage[] = [
             { $match: conditionPairPipeline },
             {
                 $lookup: {
@@ -215,6 +215,11 @@ export class OpportunitySearchService {
         //     conditionPairPipeline.$or = orConditions;
         // }
 
+        console.log('real time search', body.sortCondition);
+
+        let sortField: string = body.sortCondition.split(':')[0];
+        let direction: 1 | -1 = body.sortCondition.split(':')[1] === '1' ? 1 : -1;
+
         const handsPipeline = [
             { $match: conditionPairPipeline },
             {
@@ -282,6 +287,11 @@ export class OpportunitySearchService {
             },
             {
                 $unwind: '$credential',
+            },
+            {
+                $sort: {
+                    [sortField]: direction
+                }
             },
             {
                 $project: {

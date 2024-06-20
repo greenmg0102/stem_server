@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Schema as MongooseSchema } from 'mongoose';
+import { PipelineStage, Model, Schema as MongooseSchema } from 'mongoose';
 import { ObjectId } from 'mongodb';
 
 import { ProgramSchoolOrg } from 'src/modules/admin/program-school-org/schemas/program-school-org.schema';
@@ -43,10 +43,10 @@ export class IntegrationSearchService {
         let schoolOrgIdList = searchParameter.length > 0 && body.programSchoolOrg.length === 0 ? await this.programSchoolOrgModal.find({
             $or: [
                 { name: { $in: regexArray } },
-                { address: { $in: regexArray } },
-                { city: { $in: regexArray } },
-                { zip: { $in: regexArray } },
-                { neighborhood: { $in: regexArray } }
+                // { address: { $in: regexArray } },
+                // { city: { $in: regexArray } },
+                // { zip: { $in: regexArray } },
+                // { neighborhood: { $in: regexArray } }
             ]
         }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
 
@@ -56,10 +56,9 @@ export class IntegrationSearchService {
         let specificFieldStudyIdList = searchParameter.length > 0 && body.credential.length === 0 ? await this.specificFieldStudyModal.find({ specificField: { $in: regexArray } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
         let generalFieldStudyIdList = searchParameter.length > 0 && body.field.length === 0 ? await this.generalFieldStudyModal.find({ field: { $in: regexArray } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
         let credentialIdList = searchParameter.length > 0 && body.credential.length === 0 ? await this.credentialModal.find({ credential: { $in: regexArray } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
-        let educationlevelModalIdList = searchParameter.length > 0 && body.credential.length === 0 ? await this.educationlevelModal.find({ educationlevel: { $in: regexArray } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
-        let requirementcredentialModalIdList = searchParameter.length > 0 && body.credential.length === 0 ? await this.requirementcredentialModal.find({ requirementcredential: { $in: regexArray } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
-        let requirementageModalIdList = searchParameter.length > 0 && body.credential.length === 0 ? await this.requirementageModal.find({ requirementage: { $in: regexArray } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
-
+        // let educationlevelModalIdList = searchParameter.length > 0 && body.credential.length === 0 ? await this.educationlevelModal.find({ educationlevel: { $in: regexArray } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
+        // let requirementcredentialModalIdList = searchParameter.length > 0 && body.credential.length === 0 ? await this.requirementcredentialModal.find({ requirementcredential: { $in: regexArray } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
+        // let requirementageModalIdList = searchParameter.length > 0 && body.credential.length === 0 ? await this.requirementageModal.find({ requirementage: { $in: regexArray } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
 
         let programSchoolOrgIdList = body.programSchoolOrg.map((item: any) => new ObjectId(item.value))
         let programSchoolOrgTypeList = body.programSchoolOrgType.map((item: any) => new ObjectId(item.value))
@@ -105,16 +104,21 @@ export class IntegrationSearchService {
         else orConditions.push({ credential: { $in: credentialIdList } });
 
         orConditions.push({ SpecificAreaofStudy: { $in: specificFieldStudyIdList } });
-        orConditions.push({ EducationLevel: { $in: educationlevelModalIdList } });
-        orConditions.push({ ApplicantRequirementCredential: { $in: requirementcredentialModalIdList } });
-        orConditions.push({ Age: { $in: requirementageModalIdList } });
+        // orConditions.push({ EducationLevel: { $in: educationlevelModalIdList } });
+        // orConditions.push({ ApplicantRequirementCredential: { $in: requirementcredentialModalIdList } });
+        // orConditions.push({ Age: { $in: requirementageModalIdList } });
 
 
         if (orConditions.length > 0) {
             conditionPairPipeline.$or = orConditions;
         }
 
-        const handsPipeline = [
+        console.log('real time search', body.sortCondition);
+
+        let sortField: string = body.sortCondition.split(':')[0];
+        let direction: 1 | -1 = body.sortCondition.split(':')[1] === '1' ? 1 : -1;
+
+        const handsPipeline: PipelineStage[] = [
             { $match: conditionPairPipeline },
             {
                 $lookup: {
@@ -181,6 +185,12 @@ export class IntegrationSearchService {
             },
             {
                 $unwind: '$credential',
+            },
+            {
+                $sort: {
+                    [sortField]: direction
+                    // 'credentialSchool.school': 1 // Sorting by the 'name' field in 'schoolOrg'
+                }
             },
             {
                 $project: {
