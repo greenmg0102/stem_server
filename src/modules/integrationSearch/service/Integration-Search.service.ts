@@ -40,20 +40,16 @@ export class IntegrationSearchService {
 
         const regexArray = searchParameter.trim().split(" ").map((param: any) => new RegExp(param, 'i'));
 
-        let schoolOrgIdList = searchParameter.length > 0 && body.programSchoolOrg.length === 0 ? await this.programSchoolOrgModal.find({
-            $or: [
-                { name: { $in: regexArray } },
-                // { address: { $in: regexArray } },
-                // { city: { $in: regexArray } },
-                // { zip: { $in: regexArray } },
-                // { neighborhood: { $in: regexArray } }
-            ]
-        }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
+        // let schoolOrgIdList = searchParameter.length > 0 && body.programSchoolOrg.length === 0 ? await this.programSchoolOrgModal.find({
+        //     $or: [
+        //         { name: { $in: regexArray } },
+        //     ]
+        // }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
 
-        let schoolOrgTypeIdList = searchParameter.length > 0 && body.programSchoolOrgType.length === 0 ? await this.programSchoolTypeModal.find({ type: { $in: regexArray } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
+        // let schoolOrgTypeIdList = searchParameter.length > 0 && body.programSchoolOrgType.length === 0 ? await this.programSchoolTypeModal.find({ type: { $in: regexArray } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
         let schoolIdList = searchParameter.length > 0 && body.credentialSchool.length === 0 ? await this.schoolModal.find({ school: { $in: regexArray } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
         let opportunityIdList = searchParameter.length > 0 && body.Opportunity.length === 0 ? await this.opportunityModal.find({ opportunity: { $in: regexArray } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
-        let specificFieldStudyIdList = searchParameter.length > 0 && body.credential.length === 0 ? await this.specificFieldStudyModal.find({ specificField: { $in: regexArray } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
+        // let specificFieldStudyIdList = searchParameter.length > 0 && body.credential.length === 0 ? await this.specificFieldStudyModal.find({ specificField: { $in: regexArray } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
         let generalFieldStudyIdList = searchParameter.length > 0 && body.field.length === 0 ? await this.generalFieldStudyModal.find({ field: { $in: regexArray } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
         let credentialIdList = searchParameter.length > 0 && body.credential.length === 0 ? await this.credentialModal.find({ credential: { $in: regexArray } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
         // let educationlevelModalIdList = searchParameter.length > 0 && body.credential.length === 0 ? await this.educationlevelModal.find({ educationlevel: { $in: regexArray } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
@@ -88,11 +84,11 @@ export class IntegrationSearchService {
         if (body.Opportunity.length > 0) conditionPairPipeline.Opportunity = { $in: OpportunityList }
         else orConditions.push({ Opportunity: { $in: opportunityIdList } });
 
-        if (body.programSchoolOrg.length > 0) conditionPairPipeline.programSchoolOrg = { $in: programSchoolOrgIdList }
-        else orConditions.push({ programSchoolOrg: { $in: schoolOrgIdList } });
+        // if (body.programSchoolOrg.length > 0) conditionPairPipeline.programSchoolOrg = { $in: programSchoolOrgIdList }
+        // else orConditions.push({ programSchoolOrg: { $in: schoolOrgIdList } });
 
-        if (body.programSchoolOrgType.length > 0) conditionPairPipeline.programSchoolOrgType = { $in: programSchoolOrgTypeList }
-        else orConditions.push({ programSchoolOrgType: { $in: schoolOrgTypeIdList } });
+        // if (body.programSchoolOrgType.length > 0) conditionPairPipeline.programSchoolOrgType = { $in: programSchoolOrgTypeList }
+        // else orConditions.push({ programSchoolOrgType: { $in: schoolOrgTypeIdList } });
 
         if (credentialSchoolList.length > 0) conditionPairPipeline.credentialSchool = { $in: credentialSchoolList }
         else orConditions.push({ credentialSchool: { $in: schoolIdList } });
@@ -103,7 +99,7 @@ export class IntegrationSearchService {
         if (body.credential.length > 0) conditionPairPipeline.credential = { $in: credentialList }
         else orConditions.push({ credential: { $in: credentialIdList } });
 
-        orConditions.push({ SpecificAreaofStudy: { $in: specificFieldStudyIdList } });
+        // orConditions.push({ SpecificAreaofStudy: { $in: specificFieldStudyIdList } });
         // orConditions.push({ EducationLevel: { $in: educationlevelModalIdList } });
         // orConditions.push({ ApplicantRequirementCredential: { $in: requirementcredentialModalIdList } });
         // orConditions.push({ Age: { $in: requirementageModalIdList } });
@@ -189,7 +185,6 @@ export class IntegrationSearchService {
             {
                 $sort: {
                     [sortField]: direction
-                    // 'credentialSchool.school': 1 // Sorting by the 'name' field in 'schoolOrg'
                 }
             },
             {
