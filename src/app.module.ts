@@ -41,6 +41,8 @@ import { CredentialModule } from './modules/admin/credential/Credential.module';
 import { ProgramSchoolOrgModule } from './modules/admin/program-school-org/programSchoolOrg.module';
 import { StemModule } from './modules/admin/stem/Stem.module';
 import { IntegrationSearchModule } from './modules/integrationSearch/Integration-Search.module';
+import { GroupBySearchModule } from './modules/group-by-search/group-by-search.module';
+
 import { GeneralFieldModule } from './modules/general-field/General-Field.module';
 
 
@@ -129,6 +131,7 @@ import * as path from 'path'; // Import the path module
     StemModule,
     PaymentModule,
     IntegrationSearchModule,
+    GroupBySearchModule,
     GeneralFieldModule,
     HandHistoryParsingModule,
     PremiumOptionModule,
