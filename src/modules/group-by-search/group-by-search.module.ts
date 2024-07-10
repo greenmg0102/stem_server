@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { GroupByListService } from './service/group-by-list.service';
 import { CredentialFromOpportunityService } from './service/credential-from-opportunity.service'
 import { PathwayFromCredentialService } from './service/pathway-from-credential.service'
+import { OpportunityFromPathwayService } from './service/opportunity-from-pathway.service'
 
 import { GroupByListController } from './controller/group-by-list.controller';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -35,7 +36,8 @@ import { Educationlevel, EducationlevelSchema } from 'src/modules/admin/educatio
   providers: [
     GroupByListService,
     CredentialFromOpportunityService,
-    PathwayFromCredentialService
+    PathwayFromCredentialService,
+    OpportunityFromPathwayService
   ],
   controllers: [
     GroupByListController

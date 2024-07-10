@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { GroupByListService } from '../service/group-by-list.service'
 import { CredentialFromOpportunityService } from '../service/credential-from-opportunity.service'
+import { OpportunityFromPathwayService } from '../service/opportunity-from-pathway.service'
 import { PathwayFromCredentialService } from '../service/pathway-from-credential.service'
 
 
@@ -16,12 +17,20 @@ export class GroupByListController {
         private groupByListService: GroupByListService,
         private credentialFromOpportunityService: CredentialFromOpportunityService,
         private pathwayFromCredentialService: PathwayFromCredentialService,
+        private opportunityFromPathwayService: OpportunityFromPathwayService,
         
     ) { }
 
     @Get('/read')
     async read() {
         const hands = await this.groupByListService.groupByListRead();
+        return hands;
+    }
+
+    
+    @Post('/opportunity-from-pathway')
+    async opportunityFromPathway(@Body() body: any) {
+        const hands = await this.opportunityFromPathwayService.opportunityFromPathway(body);
         return hands;
     }
 
