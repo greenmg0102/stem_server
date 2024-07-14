@@ -204,7 +204,6 @@ export class ReportGlobalStatisticService {
                             ]
                         },
                         else: {
-
                             $multiply: [
                                 {
                                     $divide: [
@@ -272,7 +271,6 @@ export class ReportGlobalStatisticService {
                             ]
                         },
                         else: {
-
                             $multiply: [
                                 {
                                     $divide: [
@@ -296,6 +294,8 @@ export class ReportGlobalStatisticService {
             }
         }
 
+        console.log("@@s@");
+        
         let statistics = await this.handHistoryModel.aggregate([
             { $match: pipeLine },
             { $group: groupObj },

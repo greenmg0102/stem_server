@@ -56,13 +56,24 @@ export class IntegrationSearchService {
         // let requirementcredentialModalIdList = searchParameter.length > 0 && body.credential.length === 0 ? await this.requirementcredentialModal.find({ requirementcredential: { $in: regexArray } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
         // let requirementageModalIdList = searchParameter.length > 0 && body.credential.length === 0 ? await this.requirementageModal.find({ requirementage: { $in: regexArray } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
 
-        let programSchoolOrgIdList = body.programSchoolOrg.map((item: any) => new ObjectId(item.value))
-        let programSchoolOrgTypeList = body.programSchoolOrgType.map((item: any) => new ObjectId(item.value))
+        // let programSchoolOrgIdList = body.programSchoolOrg.map((item: any) => new ObjectId(item.value))
+        // let programSchoolOrgTypeList = body.programSchoolOrgType.map((item: any) => new ObjectId(item.value))
+
+
         let credentialSchoolList = body.credentialSchool.map((item: any) => new ObjectId(item.value))
         let OpportunityList = body.Opportunity.map((item: any) => new ObjectId(item.value))
         let fieldList = body.field.map((item: any) => new ObjectId(item.value))
-        let credentialList = body.credential.map((item: any) => new ObjectId(item.value))
+        let credentialList = []
 
+        if (body && body.credential && body.credential[0] && body.credential[0].value === null) {
+            let credentialHint = body.credential[0].label
+            const keyword = " Certifications";
+            const cleanedCredential = credentialHint.replace(keyword, "").trim();
+            const regex = new RegExp(cleanedCredential, 'i');
+            credentialList = await this.credentialModal.find({ credential: regex }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id)))
+        } else {
+            credentialList = body.credential.map((item: any) => new ObjectId(item.value))
+        }
 
         let orConditions: any[] = [
             { CourseList: { $in: regexArray } },

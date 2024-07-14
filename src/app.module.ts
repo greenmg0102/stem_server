@@ -36,6 +36,8 @@ import { GeneralFieldStudyModule } from './modules/admin/general-field-study/Gen
 import { OpportunityModule } from './modules/admin/opportuniy/Opportunity.module';
 import { OpportunitySearchModule } from './modules/opportunity/Opportunity-Search.module';
 import { CredentialSearchModule } from './modules/credential/Credential-Search.module';
+import { BookMarkModule } from './modules/bookmark/Book-mark.module';
+
 
 import { CredentialModule } from './modules/admin/credential/Credential.module';
 import { ProgramSchoolOrgModule } from './modules/admin/program-school-org/programSchoolOrg.module';
@@ -124,6 +126,7 @@ import * as path from 'path'; // Import the path module
     GeneralFieldStudyModule,
     OpportunitySearchModule,
     CredentialSearchModule,
+    BookMarkModule,
     OpportunityModule,
     CredentialModule,
     ProgramSchoolOrgModule,
