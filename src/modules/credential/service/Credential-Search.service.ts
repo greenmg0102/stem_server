@@ -36,7 +36,7 @@ export class CredentialSearchService {
 
         let credentialResult = await this.credentialModal.find({ credential: { $regex: body.searchValue, $options: "i" } })
 
-        let bufferCredential= credentialResult.map((item: any) => item._id)
+        let bufferCredential = credentialResult.map((item: any) => item._id)
 
         let conditionPairPipeline = {
             Opportunity: { $in: bufferCredential },
@@ -134,30 +134,37 @@ export class CredentialSearchService {
 
     async filterRead(): Promise<any> {
 
-        let credentialResult = await this.stemModal.aggregate([
-            {
-                $lookup: {
-                    from: 'credentials',
-                    localField: 'credential',
-                    foreignField: '_id',
-                    as: 'credential',
-                },
-            },
-            {
-                $unwind: '$credential',
-            },
-            {
-                $group: {
-                    _id: "$credential.credential",
-                    count: { $sum: 1 }
-                }
-            }
-        ])
+        let credentialResult = (await this.credentialModal.find({ status: 1 })).map((item: any) => item.credential)
 
         return {
             isOkay: true,
             result: credentialResult
         }
+
+        // let credentialResult = await this.stemModal.aggregate([
+        //     {
+        //         $lookup: {
+        //             from: 'credentials',
+        //             localField: 'credential',
+        //             foreignField: '_id',
+        //             as: 'credential',
+        //         },
+        //     },
+        //     {
+        //         $unwind: '$credential',
+        //     },
+        //     {
+        //         $group: {
+        //             _id: "$credential.credential",
+        //             count: { $sum: 1 }
+        //         }
+        //     }
+        // ])
+
+        // return {
+        //     isOkay: true,
+        //     result: credentialResult
+        // }
     }
 
     async stemAccordingtoCredentialRead(body: any): Promise<any> {
@@ -177,11 +184,27 @@ export class CredentialSearchService {
             ]
         }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id)))
 
-        let credentialId = await this.credentialModal.findOne({ credential: body.credential }).then((res: any) => {
-            return res._id
-        })
 
-        
+        let credentialId = []
+        if (!body.credential) {
+            return {
+                isOkay: true,
+                result: [],
+                totalCount: 0
+            }
+        } else if (body.credential.includes("Certifications Category")) {
+
+            const keyword = " Certifications Category";
+            const cleanedCredential = body.credential.replace(keyword, "").trim();
+            const regex = new RegExp(cleanedCredential, 'i');
+            credentialId = await this.credentialModal.find({ credential: regex }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id)))
+        } else {
+            credentialId = await this.credentialModal.findOne({ credential: body.credential }).then((res: any) => {
+                return res._id
+            })
+        }
+
+
         let orConditions: any[] = [
             { credential: credentialId }
         ];
@@ -292,8 +315,6 @@ export class CredentialSearchService {
 
         const total = await this.stemModal.countDocuments(conditionPairPipeline);
         const result = await this.stemModal.aggregate(handsPipeline).exec()
-
-        console.log(total, result.length);
 
         return {
             isOkay: true,
