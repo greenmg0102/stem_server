@@ -16,7 +16,7 @@ import { Credential } from 'src/modules/admin/credential/schemas/credential.sche
 import { Stem } from 'src/modules/admin/stem/schemas/stem.schema';
 
 @Injectable()
-export class GroupByListService {
+export class CredentialFromOccupationService {
 
     constructor(
         @InjectModel(ProgramSchoolOrg.name) private readonly programSchoolOrgModal: Model<ProgramSchoolOrg>,
@@ -29,23 +29,27 @@ export class GroupByListService {
         @InjectModel(Educationlevel.name) private readonly educationlevelModal: Model<Educationlevel>,
         @InjectModel(Requirementcredential.name) private readonly requirementcredentialModal: Model<Requirementcredential>,
         @InjectModel(Requirementage.name) private readonly requirementageModal: Model<Requirementage>,
-        @InjectModel(Stem.name) private readonly stemModal: Model<Stem>,
+        @InjectModel(Stem.name) private readonly stemModal: Model<Stem>
     ) { }
 
-    async groupByListRead(): Promise<any> {
+    async credentialFromOccupation(body: any): Promise<any> {
 
-        let specificFieldStudyList = await this.specificFieldStudyModal.find()
-        let opportunityList = await this.opportunityModal.find()
-        let credentialList = await this.credentialModal.find()
-        let generalFieldStudyList = await this.generalFieldStudyModal.find()
+        console.log("body", body);
 
+
+        let real = await this.stemModal.find({ SpecificAreaofStudy: body.data }).then((res: any) => { return res })
+        let credentialIdList = new Set(real.map((item: any) => item.credential))
+
+        let credentialList = await this.credentialModal.aggregate([
+            {
+                $match: {
+                    _id: { $in: [...credentialIdList] }
+                },
+            }
+        ])
         return {
             isOkay: true,
-            result: {
-                specificFieldStudyList: specificFieldStudyList,
-                credentialList: credentialList,
-                generalFieldStudyList: generalFieldStudyList
-            },
+            credentialList: credentialList
         }
     }
 

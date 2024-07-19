@@ -24,8 +24,22 @@ export class IntegrationSearchController {
         const hands = await this.integrationSearchService.realTimeRead(body);
         return hands;
     }
-    
-    
+
+    @Post('/real-time-read-group')
+    async realTimeReadInGrup(@Body() body: any) {
+
+        console.log('body', body);
+
+        let hands: any = []
+        if (body.isUniqueSchool) {
+            hands = await this.integrationSearchService.realTimeReadInGrup(body);
+        } else {
+            hands = await this.integrationSearchService.SchoolRealTimeRead(body);
+        }
+        return hands;
+    }
+
+
     @Get('/readId/:id')
     async readId(@Param('id') id: string) {
         const hands = await this.integrationSearchService.readId(id);

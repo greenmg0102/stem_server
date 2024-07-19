@@ -271,7 +271,6 @@ export class RaiseSizingTableService {
                           as: "villainAction",
                           in: {
                             $divide: ["$$villainAction.currentVillainActionAmount", body.field.includes("allin") ? "$bigBlind" : "$$villainAction.previousActionAmount"]
-
                           }
                         }
                       }

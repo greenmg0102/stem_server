@@ -185,6 +185,17 @@ export class IntegrationSearchService {
                 $unwind: '$credential',
             },
             {
+                $lookup: {
+                    from: 'specificfieldstudys',
+                    localField: 'SpecificAreaofStudy',
+                    foreignField: '_id',
+                    as: 'SpecificAreaofStudy',
+                },
+            },
+            {
+                $unwind: '$SpecificAreaofStudy',
+            },
+            {
                 $project: {
                     schoolOrg: 1,
                     schoolOrgType: 1,
@@ -361,6 +372,17 @@ export class IntegrationSearchService {
             },
             {
                 $unwind: '$credential',
+            },
+            {
+                $lookup: {
+                    from: 'specificfieldstudys',
+                    localField: 'SpecificAreaofStudy',
+                    foreignField: '_id',
+                    as: 'SpecificAreaofStudy',
+                },
+            },
+            {
+                $unwind: '$SpecificAreaofStudy',
             },
             {
                 $project: {
