@@ -29,10 +29,12 @@ export class CredentialSearchController {
     @Post('/stem-accordingto-credential-read')
     async stemAccordingtoCredentialRead(@Body() body: any) {
 
-        const hands = await this.credentialSearchService.stemAccordingtoCredentialRead(body);
+        let hands = []
+        if (!body.isUnique) {
+            hands = await this.credentialSearchService.stemAccordingtoCredentialRead(body);
+        } else {
+            hands = await this.credentialSearchService.stemAccordingtoCredentialReadSchool(body);
+        }
         return hands;
     }
-    
-
-
 }

@@ -209,10 +209,10 @@ export class IntegrationSearchService {
                     schoolOrg: 1,
                     schoolOrgType: 1,
                     credentialSchool: 1,
+                    SpecificAreaofStudy: 1,
                     opportunity: 1,
                     field: 1,
                     credential: 1,
-                    SpecificAreaofStudy: 1
                 }
             },
             { $skip: (page - 1) * pageSize },
@@ -223,16 +223,6 @@ export class IntegrationSearchService {
         
         console.log("result", result);
         
-        // let total: any = await this.stemModal.aggregate([
-        //     { $match: conditionPairPipeline },
-        //     { $count: "totalCount" }
-        // ]).exec();
-
-        // return {
-        //     isOkay: true,
-        //     result: result,
-        //     totalCount: total[0] === undefined ? 0 : total[0].totalCount
-        // }
     }
 
     async realTimeReadInGrup(body: any): Promise<any> {
@@ -417,10 +407,10 @@ export class IntegrationSearchService {
                     schoolOrg: 1,
                     schoolOrgType: 1,
                     credentialSchool: 1,
+                    SpecificAreaofStudy: 1,
                     opportunity: 1,
                     field: 1,
                     credential: 1,
-                    SpecificAreaofStudy: 1
                 }
             },
             { $skip: (page - 1) * pageSize },
@@ -623,6 +613,7 @@ export class IntegrationSearchService {
                     schoolOrg: 1,
                     schoolOrgType: 1,
                     credentialSchool: 1,
+                    SpecificAreaofStudy: 1,
                     opportunity: 1,
                     field: 1,
                     credential: 1,
@@ -819,6 +810,7 @@ export class IntegrationSearchService {
                     schoolOrgType: 1,
                     credentialSchool: 1,
                     opportunity: 1,
+                    SpecificAreaofStudy: 1,
                     field: 1,
                     credential: 1,
                     CourseList: 1,

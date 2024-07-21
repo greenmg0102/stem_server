@@ -29,7 +29,13 @@ export class GeneralFieldController {
     @Post('/stem-accordingto-general-read')
     async stemAccordingtoGeneralFieldRead(@Body() body: any) {
 
-        const hands = await this.generalFieldService.stemAccordingtoGeneralFieldRead(body);
+        let hands = []
+        if (!body.isUnique) {
+            hands = await this.generalFieldService.stemAccordingtoGeneralFieldRead(body);
+        } else {
+            hands = await this.generalFieldService.stemAccordingtoGeneralFieldSchoolRead(body);
+        }
+
         return hands;
     }
     

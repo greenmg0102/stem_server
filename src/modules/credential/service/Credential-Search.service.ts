@@ -33,7 +33,6 @@ export class CredentialSearchService {
 
     async read(body: any): Promise<any> {
 
-
         let credentialResult = await this.credentialModal.find({ credential: { $regex: body.searchValue, $options: "i" } })
 
         let bufferCredential = credentialResult.map((item: any) => item._id)
@@ -127,6 +126,7 @@ export class CredentialSearchService {
                     schoolOrgType: 1,
                     credentialSchool: 1,
                     opportunity: 1,
+                    SpecificAreaofStudy: 1,
                     field: 1,
                     credential: 1
                 }
@@ -180,8 +180,6 @@ export class CredentialSearchService {
 
     async stemAccordingtoCredentialRead(body: any): Promise<any> {
 
-        console.log("body", body);
-
         let searchParameter = body.searchParameter
         const regexArray = searchParameter.trim().split(" ").map((param: any) => new RegExp(param, 'i'));
 
@@ -194,7 +192,6 @@ export class CredentialSearchService {
                 { neighborhood: { $in: regexArray } }
             ]
         }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id)))
-
 
         let credentialId = []
         if (!body.credential) {
@@ -215,7 +212,6 @@ export class CredentialSearchService {
             })
         }
 
-
         let orConditions: any[] = [
             { credential: credentialId }
         ];
@@ -224,10 +220,8 @@ export class CredentialSearchService {
             $and: orConditions
         };
 
+
         if (schoolOrgIdList.length > 0) orConditions.push({ programSchoolOrg: { $in: schoolOrgIdList } });
-
-
-        console.log('real time search', body.sortCondition);
 
         let sortField: string = body.sortCondition.split(':')[0];
         let direction: 1 | -1 = body.sortCondition.split(':')[1] === '1' ? 1 : -1;
@@ -323,6 +317,7 @@ export class CredentialSearchService {
                     credentialSchool: 1,
                     opportunity: 1,
                     field: 1,
+                    SpecificAreaofStudy: 1,
                     credential: 1,
                     CourseList: 1,
                     EducationLevel: 1,
@@ -336,6 +331,136 @@ export class CredentialSearchService {
         ];
 
         const total = await this.stemModal.countDocuments(conditionPairPipeline);
+        const result = await this.stemModal.aggregate(handsPipeline).exec()
+
+        return {
+            isOkay: true,
+            result: result,
+            totalCount: total
+        }
+    }
+
+    async stemAccordingtoCredentialReadSchool(body: any): Promise<any> {
+
+        let searchParameter = body.searchParameter
+        const regexArray = searchParameter.trim().split(" ").map((param: any) => new RegExp(param, 'i'));
+
+        let schoolOrgIdList = await this.programSchoolOrgModal.find({
+            $or: [
+                { name: { $in: regexArray } },
+                { address: { $in: regexArray } },
+                { city: { $in: regexArray } },
+                { zip: { $in: regexArray } },
+                { neighborhood: { $in: regexArray } }
+            ]
+        }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id)))
+
+        let credentialId = []
+        if (!body.credential) {
+            return {
+                isOkay: true,
+                result: [],
+                totalCount: 0
+            }
+        } else if (body.credential.includes("Certifications Category")) {
+
+            const keyword = " Certifications Category";
+            const cleanedCredential = body.credential.replace(keyword, "").trim();
+            const regex = new RegExp(cleanedCredential, 'i');
+            credentialId = await this.credentialModal.find({ credential: regex }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id)))
+        } else {
+            let id = await this.credentialModal.findOne({ credential: body.credential }).then((res: any) => {
+                return res._id
+            })
+            credentialId[0] = id
+        }
+
+        let orConditions: any[] = [
+            { credential: { $in: credentialId } }
+        ];
+
+        let conditionPairPipeline = {
+            $and: orConditions
+        };
+
+        if (schoolOrgIdList.length > 0) orConditions.push({ programSchoolOrg: { $in: schoolOrgIdList } });
+
+        let sortField: string = body.sortCondition.split(':')[0];
+        let direction: 1 | -1 = body.sortCondition.split(':')[1] === '1' ? 1 : -1;
+
+        const handsPipeline = [
+            { $match: conditionPairPipeline },
+            {
+                $lookup: {
+                    from: 'programschoolorgs',
+                    localField: 'programSchoolOrg',
+                    foreignField: '_id',
+                    as: 'schoolOrg',
+                },
+            },
+            {
+                $unwind: '$schoolOrg',
+            },
+            {
+                $lookup: {
+                    from: 'schools',
+                    localField: 'credentialSchool',
+                    foreignField: '_id',
+                    as: 'credentialSchool',
+                },
+            },
+            {
+                $unwind: '$credentialSchool',
+            },
+            {
+                $group: {
+                    _id: '$credentialSchool._id',
+                    credentialSchool: { $first: '$credentialSchool' },
+                    schoolOrg: { $first: '$schoolOrg' },
+                }
+            },
+            {
+                $sort: {
+                    [`credentialSchool.${sortField}`]: direction
+                }
+            },
+            {
+                $project: {
+                    credentialSchool: 1,
+                    schoolOrg: 1
+                }
+            },
+            { $skip: (body.page - 1) * body.pageSize },
+            { $limit: body.pageSize }
+        ];
+
+        const handsPipelineSize = [
+            { $match: conditionPairPipeline },
+            {
+                $lookup: {
+                    from: 'schools',
+                    localField: 'credentialSchool',
+                    foreignField: '_id',
+                    as: 'credentialSchool',
+                },
+            },
+            {
+                $unwind: '$credentialSchool',
+            },
+            {
+                $group: {
+                    _id: '$credentialSchool._id',
+                    credentialSchool: { $first: '$credentialSchool' },
+                }
+            },
+            {
+                $project: {
+                    credentialSchool: 1,
+                }
+            },
+        ];
+
+        const total = (await this.stemModal.aggregate(handsPipelineSize)).length;
         const result = await this.stemModal.aggregate(handsPipeline).exec()
 
         return {

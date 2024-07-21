@@ -31,7 +31,7 @@ export class IntegrationSearchController {
         console.log('body', body);
 
         let hands: any = []
-        if (body.isUniqueSchool) {
+        if (!body.isUniqueSchool) {
             hands = await this.integrationSearchService.realTimeReadInGrup(body);
         } else {
             hands = await this.integrationSearchService.SchoolRealTimeRead(body);
