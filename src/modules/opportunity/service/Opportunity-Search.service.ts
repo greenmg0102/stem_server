@@ -277,7 +277,6 @@ export class OpportunitySearchService {
             },
         ];
 
-
         const total = (await this.stemModal.aggregate(handsPipelineSize)).length;
         const result = await this.stemModal.aggregate(handsPipeline).exec()
 
@@ -286,7 +285,6 @@ export class OpportunitySearchService {
             result: result,
             totalCount: total
         }
-
     }
 
     async stemAccordingtoOpportunityRead(body: any): Promise<any> {

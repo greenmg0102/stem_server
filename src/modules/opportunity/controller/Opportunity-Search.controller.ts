@@ -29,7 +29,6 @@ export class OpportunitySearchController {
     @Post('/stem-accordingto-opportunity-read')
     async stemAccordingtoOpportunityRead(@Body() body: any) {
 
-
         let hands = []
         if (!body.isUnique) {
             hands = await this.opportunitySearchService.stemAccordingtoOpportunityRead(body);
@@ -37,10 +36,7 @@ export class OpportunitySearchController {
             hands = await this.opportunitySearchService.stemAccordingtoOpportunityUniqueSchoolRead(body);
         }
 
-
         return hands;
     }
-
-
 
 }

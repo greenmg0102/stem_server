@@ -33,6 +33,8 @@ export class IntegrationSearchService {
     ) { }
 
     async SchoolRealTimeRead(body: any): Promise<any> {
+
+
         let page = body.page
         let pageSize = body.pageSize
         let searchParameter = body.searchParameter
@@ -123,7 +125,7 @@ export class IntegrationSearchService {
         let sortField: string = body.sortCondition.split(':')[0];
         let direction: 1 | -1 = body.sortCondition.split(':')[1] === '1' ? 1 : -1;
 
-        const handsPipeline: PipelineStage[] = [
+        const handsPipeline = [
             { $match: conditionPairPipeline },
             {
                 $lookup: {
@@ -133,16 +135,9 @@ export class IntegrationSearchService {
                     as: 'schoolOrg',
                 },
             },
-            { $unwind: '$schoolOrg' },
             {
-                $lookup: {
-                    from: 'programschooltypes',
-                    localField: 'programSchoolOrgType',
-                    foreignField: '_id',
-                    as: 'schoolOrgType',
-                },
+                $unwind: '$schoolOrg',
             },
-            { $unwind: '$schoolOrgType' },
             {
                 $lookup: {
                     from: 'schools',
@@ -151,78 +146,69 @@ export class IntegrationSearchService {
                     as: 'credentialSchool',
                 },
             },
-            { $unwind: '$credentialSchool' },
+            {
+                $unwind: '$credentialSchool',
+            },
             {
                 $group: {
-                    _id: '$credentialSchool.school',
-                    doc: { $first: '$$ROOT' }
+                    _id: '$credentialSchool._id',
+                    credentialSchool: { $first: '$credentialSchool' },
+                    schoolOrg: { $first: '$schoolOrg' },
                 }
             },
-            {
-                $replaceRoot: {
-                    newRoot: '$doc'
-                }
-            },
-            {
-                $lookup: {
-                    from: 'opportunitys',
-                    localField: 'Opportunity',
-                    foreignField: '_id',
-                    as: 'opportunity',
-                },
-            },
-            { $unwind: '$opportunity' },
-            {
-                $lookup: {
-                    from: 'generalfieldstudys',
-                    localField: 'field',
-                    foreignField: '_id',
-                    as: 'field',
-                },
-            },
-            { $unwind: '$field' },
-            {
-                $lookup: {
-                    from: 'credentials',
-                    localField: 'credential',
-                    foreignField: '_id',
-                    as: 'credential',
-                },
-            },
-            { $unwind: '$credential' },
-            {
-                $lookup: {
-                    from: 'specificfieldstudys',
-                    localField: 'SpecificAreaofStudy',
-                    foreignField: '_id',
-                    as: 'SpecificAreaofStudy',
-                },
-            },
-            { $unwind: '$SpecificAreaofStudy' },
             {
                 $sort: {
-                    [sortField]: direction
+                    [`credentialSchool.${sortField}`]: direction
                 }
             },
             {
                 $project: {
-                    schoolOrg: 1,
-                    schoolOrgType: 1,
                     credentialSchool: 1,
-                    SpecificAreaofStudy: 1,
-                    opportunity: 1,
-                    field: 1,
-                    credential: 1,
+                    schoolOrg: 1
                 }
             },
-            { $skip: (page - 1) * pageSize },
-            { $limit: pageSize }
+            { $skip: (body.page - 1) * body.pageSize },
+            { $limit: body.pageSize }
         ];
-        
+
+
+        const handsPipelineSize = [
+            { $match: conditionPairPipeline },
+            {
+                $lookup: {
+                    from: 'schools',
+                    localField: 'credentialSchool',
+                    foreignField: '_id',
+                    as: 'credentialSchool',
+                },
+            },
+            {
+                $unwind: '$credentialSchool',
+            },
+            {
+                $group: {
+                    _id: '$credentialSchool._id',
+                    credentialSchool: { $first: '$credentialSchool' },
+                }
+            },
+            {
+                $project: {
+                    credentialSchool: 1,
+                }
+            },
+        ];
+
+        const total = (await this.stemModal.aggregate(handsPipelineSize)).length;
         const result = await this.stemModal.aggregate(handsPipeline).exec()
-        
-        console.log("result", result);
-        
+
+        console.log('result', result);
+
+        return {
+            isOkay: true,
+            result: result,
+            totalCount: total
+        }
+
     }
 
     async realTimeReadInGrup(body: any): Promise<any> {

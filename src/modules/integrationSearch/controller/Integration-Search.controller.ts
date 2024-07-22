@@ -28,10 +28,10 @@ export class IntegrationSearchController {
     @Post('/real-time-read-group')
     async realTimeReadInGrup(@Body() body: any) {
 
-        console.log('body', body);
+        console.log('realTimeReadInGrup', body);
 
         let hands: any = []
-        if (!body.isUniqueSchool) {
+        if (!body.isUnique) {
             hands = await this.integrationSearchService.realTimeReadInGrup(body);
         } else {
             hands = await this.integrationSearchService.SchoolRealTimeRead(body);
