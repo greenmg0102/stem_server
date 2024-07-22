@@ -125,7 +125,7 @@ export class IntegrationSearchService {
         let sortField: string = body.sortCondition.split(':')[0];
         let direction: 1 | -1 = body.sortCondition.split(':')[1] === '1' ? 1 : -1;
 
-        const handsPipeline = [
+        const handsPipeline: any = [
             { $match: conditionPairPipeline },
             {
                 $lookup: {
@@ -150,30 +150,49 @@ export class IntegrationSearchService {
                 $unwind: '$credentialSchool',
             },
             {
-                $group: {
-                    _id: '$credentialSchool._id',
-                    credentialSchool: { $first: '$credentialSchool' },
-                    schoolOrg: { $first: '$schoolOrg' },
-                }
+                $lookup: {
+                    from: 'credentials',
+                    localField: 'credential',
+                    foreignField: '_id',
+                    as: 'credential',
+                },
+            },
+            {
+                $unwind: '$credential',
             },
             {
                 $sort: {
-                    [`credentialSchool.${sortField}`]: direction
+                    "credentialSchool.school": 1
                 }
             },
             {
-                $project: {
-                    credentialSchool: 1,
-                    schoolOrg: 1
+                $group: {
+                    _id: {
+                        credentialSchool: "$credentialSchool._id",
+                        credential: "$credential._id"
+                    },
+                    credentialSchool: { $first: "$credentialSchool" },
+                    schoolOrg: { $first: "$schoolOrg" },
+                    credential: { $first: "$credential" }
                 }
             },
             { $skip: (body.page - 1) * body.pageSize },
             { $limit: body.pageSize }
         ];
 
-
         const handsPipelineSize = [
             { $match: conditionPairPipeline },
+            {
+                $lookup: {
+                    from: 'programschoolorgs',
+                    localField: 'programSchoolOrg',
+                    foreignField: '_id',
+                    as: 'schoolOrg',
+                },
+            },
+            {
+                $unwind: '$schoolOrg',
+            },
             {
                 $lookup: {
                     from: 'schools',
@@ -186,22 +205,31 @@ export class IntegrationSearchService {
                 $unwind: '$credentialSchool',
             },
             {
-                $group: {
-                    _id: '$credentialSchool._id',
-                    credentialSchool: { $first: '$credentialSchool' },
-                }
+                $lookup: {
+                    from: 'credentials',
+                    localField: 'credential',
+                    foreignField: '_id',
+                    as: 'credential',
+                },
             },
             {
-                $project: {
-                    credentialSchool: 1,
+                $unwind: '$credential',
+            },
+            {
+                $group: {
+                    _id: {
+                        credentialSchool: "$credentialSchool._id",
+                        credential: "$credential._id"
+                    },
+                    credentialSchool: { $first: "$credentialSchool" },
+                    schoolOrg: { $first: "$schoolOrg" },
+                    credential: { $first: "$credential" }
                 }
             },
         ];
 
         const total = (await this.stemModal.aggregate(handsPipelineSize)).length;
         const result = await this.stemModal.aggregate(handsPipeline).exec()
-
-        console.log('result', result);
 
         return {
             isOkay: true,
