@@ -28,8 +28,6 @@ export class IntegrationSearchController {
     @Post('/real-time-read-group')
     async realTimeReadInGrup(@Body() body: any) {
 
-        console.log('realTimeReadInGrup', body);
-
         let hands: any = []
         if (!body.isUnique) {
             hands = await this.integrationSearchService.realTimeReadInGrup(body);
