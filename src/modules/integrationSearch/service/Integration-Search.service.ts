@@ -327,8 +327,6 @@ export class IntegrationSearchService {
             conditionPairPipeline.$or = orConditions;
         }
 
-        console.log('real time search', body.sortCondition);
-
         let sortField: string = body.sortCondition.split(':')[0];
         let direction: 1 | -1 = body.sortCondition.split(':')[1] === '1' ? 1 : -1;
 
@@ -345,17 +343,17 @@ export class IntegrationSearchService {
             {
                 $unwind: '$schoolOrg',
             },
-            {
-                $lookup: {
-                    from: 'programschooltypes',
-                    localField: 'programSchoolOrgType',
-                    foreignField: '_id',
-                    as: 'schoolOrgType',
-                },
-            },
-            {
-                $unwind: '$schoolOrgType',
-            },
+            // {
+            //     $lookup: {
+            //         from: 'programschooltypes',
+            //         localField: 'programSchoolOrgType',
+            //         foreignField: '_id',
+            //         as: 'schoolOrgType',
+            //     },
+            // },
+            // {
+            //     $unwind: '$schoolOrgType',
+            // },
             {
                 $lookup: {
                     from: 'schools',
@@ -433,16 +431,21 @@ export class IntegrationSearchService {
 
         const result = await this.stemModal.aggregate(handsPipeline).exec()
 
+
+        console.log('result', result[0]);
+
+
         let total: any = await this.stemModal.aggregate([
             { $match: conditionPairPipeline },
             { $count: "totalCount" }
         ]).exec();
 
-        return {
-            isOkay: true,
-            result: result,
-            totalCount: total[0] === undefined ? 0 : total[0].totalCount
-        }
+
+        // return {
+        //     isOkay: true,
+        //     result: result,
+        //     totalCount: total[0] === undefined ? 0 : total[0].totalCount
+        // }
     }
 
     async realTimeRead(body: any): Promise<any> {
