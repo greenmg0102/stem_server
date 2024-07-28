@@ -211,6 +211,8 @@ export class StemService {
 
   async dumpCreate(body: any): Promise<any> {
 
+    
+
     if (body.name === "ProgramSchoolOrg") {
 
       console.log("ProgramSchoolOrg");
@@ -222,9 +224,9 @@ export class StemService {
         await newStem.save()
       }
 
-    } else if (body.name === "Program School / Org Type") {
+    } else if (body.name === "CompTIA") {
 
-      console.log("Program School / Org Type");
+      console.log("CompTIA");
       await this.programSchoolTypeModal.deleteMany({});
 
       for (let i = 0; i < body.list.length; i++) {
