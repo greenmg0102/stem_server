@@ -332,28 +332,28 @@ export class IntegrationSearchService {
 
         const handsPipeline: PipelineStage[] = [
             { $match: conditionPairPipeline },
-            {
-                $lookup: {
-                    from: 'programschoolorgs',
-                    localField: 'programSchoolOrg',
-                    foreignField: '_id',
-                    as: 'schoolOrg',
-                },
-            },
-            {
-                $unwind: '$schoolOrg',
-            },
             // {
             //     $lookup: {
-            //         from: 'programschooltypes',
-            //         localField: 'programSchoolOrgType',
+            //         from: 'programschoolorgs',
+            //         localField: 'programSchoolOrg',
             //         foreignField: '_id',
-            //         as: 'schoolOrgType',
+            //         as: 'schoolOrg',
             //     },
             // },
             // {
-            //     $unwind: '$schoolOrgType',
+            //     $unwind: '$schoolOrg',
             // },
+            {
+                $lookup: {
+                    from: 'programschooltypes',
+                    localField: 'programSchoolOrgType',
+                    foreignField: '_id',
+                    as: 'schoolOrgType',
+                },
+            },
+            {
+                $unwind: '$schoolOrgType',
+            },
             {
                 $lookup: {
                     from: 'schools',
