@@ -332,17 +332,17 @@ export class IntegrationSearchService {
 
         const handsPipeline: PipelineStage[] = [
             { $match: conditionPairPipeline },
-            // {
-            //     $lookup: {
-            //         from: 'programschoolorgs',
-            //         localField: 'programSchoolOrg',
-            //         foreignField: '_id',
-            //         as: 'schoolOrg',
-            //     },
-            // },
-            // {
-            //     $unwind: '$schoolOrg',
-            // },
+            {
+                $lookup: {
+                    from: 'programschoolorgs',
+                    localField: 'programSchoolOrg',
+                    foreignField: '_id',
+                    as: 'schoolOrg',
+                },
+            },
+            {
+                $unwind: '$schoolOrg',
+            },
             {
                 $lookup: {
                     from: 'programschooltypes',
@@ -409,6 +409,51 @@ export class IntegrationSearchService {
             {
                 $unwind: '$SpecificAreaofStudy',
             },
+
+            
+            {
+                $lookup: {
+                    from: 'educationlevels',
+                    localField: 'EducationLevel',
+                    foreignField: '_id',
+                    as: 'EducationLevel',
+                },
+            },
+            {
+                $unwind: {
+                    path: '$EducationLevel',
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $lookup: {
+                    from: 'requirementcredentials',
+                    localField: 'ApplicantRequirementCredential',
+                    foreignField: '_id',
+                    as: 'ApplicantRequirementCredential',
+                },
+            },
+            {
+                $unwind: {
+                    path: '$ApplicantRequirementCredential',
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $lookup: {
+                    from: 'requirementages',
+                    localField: 'Age',
+                    foreignField: '_id',
+                    as: 'Age',
+                },
+            },
+            {
+                $unwind: {
+                    path: '$Age',
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+
             {
                 $sort: {
                     [sortField]: direction
@@ -423,6 +468,13 @@ export class IntegrationSearchService {
                     opportunity: 1,
                     field: 1,
                     credential: 1,
+
+                    
+                    CourseList: 1,
+                    OpportunityLink: 1,
+                    EducationLevel: 1,
+                    ApplicantRequirementCredential: 1,
+                    Age: 1,
                 }
             },
             { $skip: (page - 1) * pageSize },
@@ -431,21 +483,16 @@ export class IntegrationSearchService {
 
         const result = await this.stemModal.aggregate(handsPipeline).exec()
 
-
-        console.log('result', result[0]);
-
-
         let total: any = await this.stemModal.aggregate([
             { $match: conditionPairPipeline },
             { $count: "totalCount" }
         ]).exec();
 
-
-        // return {
-        //     isOkay: true,
-        //     result: result,
-        //     totalCount: total[0] === undefined ? 0 : total[0].totalCount
-        // }
+        return {
+            isOkay: true,
+            result: result,
+            totalCount: total[0] === undefined ? 0 : total[0].totalCount
+        }
     }
 
     async realTimeRead(body: any): Promise<any> {
@@ -986,11 +1033,12 @@ export class IntegrationSearchService {
                     field: 1,
                     SpecificAreaofStudy: 1,
                     credential: 1,
+
                     CourseList: 1,
+                    OpportunityLink: 1,
                     EducationLevel: 1,
                     ApplicantRequirementCredential: 1,
                     Age: 1,
-                    OpportunityLink: 1
                 }
             },
         ];

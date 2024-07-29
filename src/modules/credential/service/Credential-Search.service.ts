@@ -305,6 +305,52 @@ export class CredentialSearchService {
             {
                 $unwind: '$SpecificAreaofStudy',
             },
+
+
+            {
+                $lookup: {
+                    from: 'educationlevels',
+                    localField: 'EducationLevel',
+                    foreignField: '_id',
+                    as: 'EducationLevel',
+                },
+            },
+            {
+                $unwind: {
+                    path: '$EducationLevel',
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $lookup: {
+                    from: 'requirementcredentials',
+                    localField: 'ApplicantRequirementCredential',
+                    foreignField: '_id',
+                    as: 'ApplicantRequirementCredential',
+                },
+            },
+            {
+                $unwind: {
+                    path: '$ApplicantRequirementCredential',
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $lookup: {
+                    from: 'requirementages',
+                    localField: 'Age',
+                    foreignField: '_id',
+                    as: 'Age',
+                },
+            },
+            {
+                $unwind: {
+                    path: '$Age',
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+
+            
             {
                 $sort: {
                     [sortField]: direction
