@@ -222,9 +222,9 @@ export class StemService {
         await newStem.save()
       }
 
-    } else if (body.name === "CompTIA") {
+    } else if (body.name === "Program School / Org Type") {
 
-      console.log("CompTIA");
+      console.log("Program School / Org Type");
       await this.programSchoolTypeModal.deleteMany({});
 
       for (let i = 0; i < body.list.length; i++) {
