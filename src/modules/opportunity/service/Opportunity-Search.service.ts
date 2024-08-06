@@ -241,7 +241,7 @@ export class OpportunitySearchService {
             },
             {
                 $sort: {
-                    "credentialSchool.school": 1
+                    [sortField]: direction
                 }
             },
             {

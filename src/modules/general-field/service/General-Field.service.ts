@@ -446,7 +446,7 @@ export class GeneralFieldService {
             },
             {
                 $sort: {
-                    "credentialSchool.school": 1
+                    [sortField]: direction
                 }
             },
             {

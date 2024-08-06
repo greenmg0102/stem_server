@@ -37,12 +37,10 @@ export class IntegrationSearchController {
         return hands;
     }
 
-
     @Get('/readId/:id')
     async readId(@Param('id') id: string) {
         const hands = await this.integrationSearchService.readId(id);
         return hands;
     }
-
 
 }

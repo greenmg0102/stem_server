@@ -34,7 +34,6 @@ export class IntegrationSearchService {
 
     async SchoolRealTimeRead(body: any): Promise<any> {
 
-
         let page = body.page
         let pageSize = body.pageSize
         let searchParameter = body.searchParameter
@@ -162,7 +161,7 @@ export class IntegrationSearchService {
             },
             {
                 $sort: {
-                    "credentialSchool.school": 1
+                    [sortField]: direction
                 }
             },
             {
@@ -227,6 +226,9 @@ export class IntegrationSearchService {
                 }
             },
         ];
+
+
+        console.log("is ! handsPipeline", handsPipeline);
 
         const total = (await this.stemModal.aggregate(handsPipelineSize)).length;
         const result = await this.stemModal.aggregate(handsPipeline).exec()
@@ -410,7 +412,7 @@ export class IntegrationSearchService {
                 $unwind: '$SpecificAreaofStudy',
             },
 
-            
+
             {
                 $lookup: {
                     from: 'educationlevels',
@@ -469,7 +471,7 @@ export class IntegrationSearchService {
                     field: 1,
                     credential: 1,
 
-                    
+
                     CourseList: 1,
                     OpportunityLink: 1,
                     EducationLevel: 1,
@@ -480,6 +482,8 @@ export class IntegrationSearchService {
             { $skip: (page - 1) * pageSize },
             { $limit: pageSize }
         ];
+
+        console.log("is not ! handsPipeline", handsPipeline);
 
         const result = await this.stemModal.aggregate(handsPipeline).exec()
 

@@ -471,7 +471,7 @@ export class CredentialSearchService {
             },
             {
                 $sort: {
-                    "credentialSchool.school": 1
+                    [sortField]: direction
                 }
             },
             {
