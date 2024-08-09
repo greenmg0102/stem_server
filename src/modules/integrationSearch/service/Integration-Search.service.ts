@@ -228,8 +228,6 @@ export class IntegrationSearchService {
         ];
 
 
-        console.log("is ! handsPipeline", handsPipeline);
-
         const total = (await this.stemModal.aggregate(handsPipelineSize)).length;
         const result = await this.stemModal.aggregate(handsPipeline).exec()
 
@@ -482,8 +480,6 @@ export class IntegrationSearchService {
             { $skip: (page - 1) * pageSize },
             { $limit: pageSize }
         ];
-
-        console.log("is not ! handsPipeline", handsPipeline);
 
         const result = await this.stemModal.aggregate(handsPipeline).exec()
 
