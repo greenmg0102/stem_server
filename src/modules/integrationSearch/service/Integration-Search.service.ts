@@ -48,6 +48,7 @@ export class IntegrationSearchService {
 
         // let schoolOrgTypeIdList = searchParameter.length > 0 && body.programSchoolOrgType.length === 0 ? await this.programSchoolTypeModal.find({ type: { $in: regexArray } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
         let schoolIdList = searchParameter.length > 0 && body.credentialSchool.length === 0 ? await this.schoolModal.find({ school: { $in: regexArray } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
+        let realopportunityIdList = searchParameter.length > 0 && body.RealOpportunity.length === 0 ? await this.opportunityModal.find({ opportunity: { $in: regexArray } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
         let opportunityIdList = searchParameter.length > 0 && body.Opportunity.length === 0 ? await this.specificFieldStudyModal.find({ specificField: { $in: regexArray } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
         // let specificFieldStudyIdList = searchParameter.length > 0 && body.credential.length === 0 ? await this.specificFieldStudyModal.find({ specificField: { $in: regexArray } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
         let generalFieldStudyIdList = searchParameter.length > 0 && body.field.length === 0 ? await this.generalFieldStudyModal.find({ field: { $in: regexArray } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
@@ -62,6 +63,7 @@ export class IntegrationSearchService {
 
         let credentialSchoolList = body.credentialSchool.map((item: any) => new ObjectId(item.value))
         let OpportunityList = body.Opportunity.map((item: any) => new ObjectId(item.value))
+        let RealOpportunityList = body.RealOpportunity ? body.RealOpportunity.map((item: any) => new ObjectId(item.value)) : []
         let fieldList = body.field.map((item: any) => new ObjectId(item.value))
         let credentialList = []
 
@@ -91,8 +93,13 @@ export class IntegrationSearchService {
             ...bufferMatching
         };
 
-        if (body.Opportunity.length > 0) conditionPairPipeline.SpecificAreaofStudy = { $in: OpportunityList }
-        else orConditions.push({ SpecificAreaofStudy: { $in: opportunityIdList } });
+        if (body.RealOpportunity.length > 0) {
+            if (body.RealOpportunity.length > 0) conditionPairPipeline.Opportunity = { $in: RealOpportunityList }
+            else orConditions.push({ Opportunity: { $in: realopportunityIdList } });
+        } else {
+            if (body.Opportunity.length > 0) conditionPairPipeline.SpecificAreaofStudy = { $in: OpportunityList }
+            else orConditions.push({ SpecificAreaofStudy: { $in: opportunityIdList } });
+        }
 
         // if (body.programSchoolOrg.length > 0) conditionPairPipeline.programSchoolOrg = { $in: programSchoolOrgIdList }
         // else orConditions.push({ programSchoolOrg: { $in: schoolOrgIdList } });
@@ -241,6 +248,9 @@ export class IntegrationSearchService {
 
     async realTimeReadInGrup(body: any): Promise<any> {
 
+        console.log("RealOpportunity", body.RealOpportunity);
+
+
         let page = body.page
         let pageSize = body.pageSize
         let searchParameter = body.searchParameter
@@ -255,6 +265,7 @@ export class IntegrationSearchService {
 
         // let schoolOrgTypeIdList = searchParameter.length > 0 && body.programSchoolOrgType.length === 0 ? await this.programSchoolTypeModal.find({ type: { $in: regexArray } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
         let schoolIdList = searchParameter.length > 0 && body.credentialSchool.length === 0 ? await this.schoolModal.find({ school: { $in: regexArray } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
+        let realopportunityIdList = searchParameter.length > 0 && body.RealOpportunity.length === 0 ? await this.opportunityModal.find({ opportunity: { $in: regexArray } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
         let opportunityIdList = searchParameter.length > 0 && body.Opportunity.length === 0 ? await this.specificFieldStudyModal.find({ specificField: { $in: regexArray } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
         // let specificFieldStudyIdList = searchParameter.length > 0 && body.credential.length === 0 ? await this.specificFieldStudyModal.find({ specificField: { $in: regexArray } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
         let generalFieldStudyIdList = searchParameter.length > 0 && body.field.length === 0 ? await this.generalFieldStudyModal.find({ field: { $in: regexArray } }).lean().select('_id').exec().then((result) => result.map((item) => new ObjectId(item._id))) : []
@@ -269,6 +280,8 @@ export class IntegrationSearchService {
 
         let credentialSchoolList = body.credentialSchool.map((item: any) => new ObjectId(item.value))
         let OpportunityList = body.Opportunity.map((item: any) => new ObjectId(item.value))
+        let RealOpportunityList = body.RealOpportunity ? body.RealOpportunity.map((item: any) => new ObjectId(item.value)) : []
+
         let fieldList = body.field.map((item: any) => new ObjectId(item.value))
         let credentialList = []
 
@@ -298,9 +311,13 @@ export class IntegrationSearchService {
             ...bufferMatching
         };
 
-
-        if (body.Opportunity.length > 0) conditionPairPipeline.SpecificAreaofStudy = { $in: OpportunityList }
-        else orConditions.push({ SpecificAreaofStudy: { $in: opportunityIdList } });
+        if (body.RealOpportunity.length > 0) {
+            if (body.RealOpportunity.length > 0) conditionPairPipeline.Opportunity = { $in: RealOpportunityList }
+            else orConditions.push({ Opportunity: { $in: realopportunityIdList } });
+        } else {
+            if (body.Opportunity.length > 0) conditionPairPipeline.SpecificAreaofStudy = { $in: OpportunityList }
+            else orConditions.push({ SpecificAreaofStudy: { $in: opportunityIdList } });
+        }
 
         // if (body.programSchoolOrg.length > 0) conditionPairPipeline.programSchoolOrg = { $in: programSchoolOrgIdList }
         // else orConditions.push({ programSchoolOrg: { $in: schoolOrgIdList } });
